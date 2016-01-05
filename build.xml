@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ds-lab-03-interpreter" default="all">
+<project name="cloudalbum" default="all">
   
   
-  <property file="../ds-lab-03-interpreter/build.properties"/>
+  <property file="cloudalbum.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
   <!-- 
   <property name="skip.tests" value="true"/>
@@ -57,159 +57,205 @@
     <exclude name="**/?*.aj"/>
   </patternset>
   
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.7" value="${jdk.home.1.7}/bin"/>
+  <path id="jdk.classpath.1.7">
+    <fileset dir="${jdk.home.1.7}">
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/rt.jar"/>
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jfxrt.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.7}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.7}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.7"/>
+  
   
   <!-- Project Libraries -->
   
-  <path id="library.com.esotericsoftware:kryo-shaded:3.0.0.classpath">
-    <pathelement location="/lib/kryo-shaded-3.0.0.jar"/>
-    <pathelement location="/lib/minlog-1.3.0.jar"/>
-    <pathelement location="/lib/objenesis-2.1.jar"/>
+  <path id="library.ant:ant-junit:1.6.5.classpath">
+    <pathelement location="${path.variable.maven_repository}/ant/ant-junit/1.6.5/ant-junit-1.6.5.jar"/>
+  </path>
+  
+  <path id="library.com.esotericsoftware:kryo:3.0.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/esotericsoftware/kryo/3.0.0/kryo-3.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/com/esotericsoftware/minlog/1.3.0/minlog-1.3.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/com/esotericsoftware/reflectasm/1.10.0/reflectasm-1.10.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/objenesis/objenesis/2.1/objenesis-2.1.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/ow2/asm/asm/4.2/asm-4.2.jar"/>
   </path>
   
   <path id="library.cup.classpath">
-    <pathelement location="/lib/JLex.jar"/>
-    <pathelement location="/lib/cup.jar"/>
-  </path>
-  
-  <path id="library.junit:junit:3.8.1.classpath">
-    <pathelement location="/lib/junit-3.8.1.jar"/>
+    <pathelement location="${basedir}/lib/JLex.jar"/>
+    <pathelement location="${basedir}/lib/cup.jar"/>
   </path>
   
   <!-- Modules -->
   
   
-  <!-- Module ds-lab-03-interpreter -->
+  <!-- Module cloudalbum -->
   
-  <dirname property="module.ds-lab-03-interpreter.basedir" file="${ant.file}"/>
+  <dirname property="module.cloudalbum.basedir" file="${ant.file}"/>
   
   
+  <property name="module.jdk.home.cloudalbum" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.cloudalbum" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.cloudalbum" value="${project.jdk.classpath}"/>
   
-  <property name="compiler.args.ds-lab-03-interpreter" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  <property name="compiler.args.cloudalbum" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
   
-  <property name="ds-lab-03-interpreter.output.dir" value="${module.ds-lab-03-interpreter.basedir}/out/production/ds-lab-03-interpreter"/>
-  <property name="ds-lab-03-interpreter.testoutput.dir" value="${module.ds-lab-03-interpreter.basedir}/out/test/ds-lab-03-interpreter"/>
+  <property name="cloudalbum.output.dir" value="${module.cloudalbum.basedir}/out/production/cloudalbum"/>
+  <property name="cloudalbum.testoutput.dir" value="${module.cloudalbum.basedir}/out/test/cloudalbum"/>
   
-  <path id="ds-lab-03-interpreter.module.bootclasspath">
+  <path id="cloudalbum.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
   </path>
   
-  <path id="ds-lab-03-interpreter.module.production.classpath">
-    <path refid="library.junit:junit:3.8.1.classpath"/>
-    <path refid="library.com.esotericsoftware:kryo-shaded:3.0.0.classpath"/>
-    <path refid="library.cup.classpath"/>
+  <path id="cloudalbum.module.production.classpath">
+    <path refid="${module.jdk.classpath.cloudalbum}"/>
+    <path refid="library.com.esotericsoftware:kryo:3.0.0.classpath"/>
+    <path refid="library.ant:ant-junit:1.6.5.classpath"/>
     <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
     <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
     <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+    <pathelement location="${basedir}/lib/JLex.jar"/>
+    <pathelement location="${basedir}/lib/cup.jar"/>
+    <path refid="library.cup.classpath"/>
   </path>
   
-  <path id="ds-lab-03-interpreter.runtime.production.module.classpath">
-    <pathelement location="${ds-lab-03-interpreter.output.dir}"/>
-    <path refid="library.junit:junit:3.8.1.classpath"/>
-    <path refid="library.com.esotericsoftware:kryo-shaded:3.0.0.classpath"/>
-    <path refid="library.cup.classpath"/>
+  <path id="cloudalbum.runtime.production.module.classpath">
+    <pathelement location="${cloudalbum.output.dir}"/>
+    <path refid="library.com.esotericsoftware:kryo:3.0.0.classpath"/>
+    <path refid="library.ant:ant-junit:1.6.5.classpath"/>
     <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
     <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
     <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+    <pathelement location="${basedir}/lib/JLex.jar"/>
+    <pathelement location="${basedir}/lib/cup.jar"/>
+    <path refid="library.cup.classpath"/>
   </path>
   
-  <path id="ds-lab-03-interpreter.module.classpath">
-    <pathelement location="${ds-lab-03-interpreter.output.dir}"/>
-    <path refid="library.junit:junit:3.8.1.classpath"/>
-    <path refid="library.com.esotericsoftware:kryo-shaded:3.0.0.classpath"/>
-    <path refid="library.cup.classpath"/>
+  <path id="cloudalbum.module.classpath">
+    <path refid="${module.jdk.classpath.cloudalbum}"/>
+    <pathelement location="${cloudalbum.output.dir}"/>
+    <path refid="library.com.esotericsoftware:kryo:3.0.0.classpath"/>
+    <path refid="library.ant:ant-junit:1.6.5.classpath"/>
     <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
     <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
     <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+    <pathelement location="${basedir}/lib/JLex.jar"/>
+    <pathelement location="${basedir}/lib/cup.jar"/>
+    <path refid="library.cup.classpath"/>
   </path>
   
-  <path id="ds-lab-03-interpreter.runtime.module.classpath">
-    <pathelement location="${ds-lab-03-interpreter.testoutput.dir}"/>
-    <pathelement location="${ds-lab-03-interpreter.output.dir}"/>
-    <path refid="library.junit:junit:3.8.1.classpath"/>
-    <path refid="library.com.esotericsoftware:kryo-shaded:3.0.0.classpath"/>
-    <path refid="library.cup.classpath"/>
+  <path id="cloudalbum.runtime.module.classpath">
+    <pathelement location="${cloudalbum.testoutput.dir}"/>
+    <pathelement location="${cloudalbum.output.dir}"/>
+    <path refid="library.com.esotericsoftware:kryo:3.0.0.classpath"/>
+    <path refid="library.ant:ant-junit:1.6.5.classpath"/>
     <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
     <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
     <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+    <pathelement location="${basedir}/lib/JLex.jar"/>
+    <pathelement location="${basedir}/lib/cup.jar"/>
+    <path refid="library.cup.classpath"/>
   </path>
   
   
-  <patternset id="excluded.from.module.ds-lab-03-interpreter">
+  <patternset id="excluded.from.module.cloudalbum">
     <patternset refid="ignored.files"/>
   </patternset>
   
-  <patternset id="excluded.from.compilation.ds-lab-03-interpreter">
-    <patternset refid="excluded.from.module.ds-lab-03-interpreter"/>
+  <patternset id="excluded.from.compilation.cloudalbum">
+    <patternset refid="excluded.from.module.cloudalbum"/>
   </patternset>
   
-  <path id="ds-lab-03-interpreter.module.sourcepath">
-    <dirset dir="${module.ds-lab-03-interpreter.basedir}">
+  <path id="cloudalbum.module.sourcepath">
+    <dirset dir="${module.cloudalbum.basedir}">
       <include name="src"/>
     </dirset>
   </path>
   
   
-  <target name="compile.module.ds-lab-03-interpreter" depends="compile.module.ds-lab-03-interpreter.production,compile.module.ds-lab-03-interpreter.tests" description="Compile module ds-lab-03-interpreter"/>
+  <target name="compile.module.cloudalbum" depends="compile.module.cloudalbum.production,compile.module.cloudalbum.tests" description="Compile module cloudalbum"/>
   
-  <target name="compile.module.ds-lab-03-interpreter.production" description="Compile module ds-lab-03-interpreter; production classes">
-    <mkdir dir="${ds-lab-03-interpreter.output.dir}"/>
-    <javac destdir="${ds-lab-03-interpreter.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-      <compilerarg line="${compiler.args.ds-lab-03-interpreter}"/>
-      <bootclasspath refid="ds-lab-03-interpreter.module.bootclasspath"/>
-      <classpath refid="ds-lab-03-interpreter.module.production.classpath"/>
-      <src refid="ds-lab-03-interpreter.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.ds-lab-03-interpreter"/>
+  <target name="compile.module.cloudalbum.production" description="Compile module cloudalbum; production classes">
+    <mkdir dir="${cloudalbum.output.dir}"/>
+    <javac destdir="${cloudalbum.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.cloudalbum}/javac">
+      <compilerarg line="${compiler.args.cloudalbum}"/>
+      <bootclasspath refid="cloudalbum.module.bootclasspath"/>
+      <classpath refid="cloudalbum.module.production.classpath"/>
+      <src refid="cloudalbum.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.cloudalbum"/>
     </javac>
     
-    <copy todir="${ds-lab-03-interpreter.output.dir}">
-      <fileset dir="${module.ds-lab-03-interpreter.basedir}/src">
+    <copy todir="${cloudalbum.output.dir}">
+      <fileset dir="${module.cloudalbum.basedir}/src">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
     </copy>
   </target>
   
-  <target name="compile.module.ds-lab-03-interpreter.tests" depends="compile.module.ds-lab-03-interpreter.production" description="compile module ds-lab-03-interpreter; test classes" unless="skip.tests"/>
+  <target name="compile.module.cloudalbum.tests" depends="compile.module.cloudalbum.production" description="compile module cloudalbum; test classes" unless="skip.tests"/>
   
-  <target name="clean.module.ds-lab-03-interpreter" description="cleanup module">
-    <delete dir="${ds-lab-03-interpreter.output.dir}"/>
-    <delete dir="${ds-lab-03-interpreter.testoutput.dir}"/>
+  <target name="clean.module.cloudalbum" description="cleanup module">
+    <delete dir="${cloudalbum.output.dir}"/>
+    <delete dir="${cloudalbum.testoutput.dir}"/>
   </target>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
   </target>
   
-  <target name="clean" depends="clean.module.ds-lab-03-interpreter" description="cleanup all"/>
+  <target name="clean" depends="clean.module.cloudalbum" description="cleanup all"/>
   
-  <target name="build.modules" depends="init, clean, compile.module.ds-lab-03-interpreter" description="build all modules"/>
+  <target name="build.modules" depends="init, clean, compile.module.cloudalbum" description="build all modules"/>
   
   <target name="init.artifacts">
     <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.ds-lab-03-interpreter:jar" value="${basedir}"/>
+    <property name="artifact.output.interfaces" value="${basedir}"/>
     <mkdir dir="${artifacts.temp.dir}"/>
-    <property name="temp.jar.path.ds-lab-03-interpreter.jar" value="${artifacts.temp.dir}/ds-lab-03-interpreter.jar"/>
+    <property name="temp.jar.path.interfaces.jar" value="${artifacts.temp.dir}/interfaces.jar"/>
   </target>
   
-  <target name="artifact.ds-lab-03-interpreter:jar" depends="init.artifacts, compile.module.ds-lab-03-interpreter" description="Build &#39;ds-lab-03-interpreter:jar&#39; artifact">
-    <property name="artifact.temp.output.ds-lab-03-interpreter:jar" value="${artifacts.temp.dir}/ds_lab_03_interpreter_jar"/>
-    <mkdir dir="${artifact.temp.output.ds-lab-03-interpreter:jar}"/>
-    <jar destfile="${temp.jar.path.ds-lab-03-interpreter.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
-      <zipfileset dir="${ds-lab-03-interpreter.output.dir}"/>
-      <zipfileset src="/lib/kryo-shaded-3.0.0.jar"/>
-      <zipfileset src="/lib/minlog-1.3.0.jar"/>
-      <zipfileset src="/lib/objenesis-2.1.jar"/>
-      <zipfileset src="/lib/junit-3.8.1.jar"/>
-      <zipfileset src="/lib/cup.jar"/>
-      <zipfileset src="/lib/JLex.jar"/>
+  <target name="artifact.interfaces" depends="init.artifacts, compile.module.cloudalbum" description="Build &#39;interfaces&#39; artifact">
+    <property name="artifact.temp.output.interfaces" value="${artifacts.temp.dir}/interfaces"/>
+    <mkdir dir="${artifact.temp.output.interfaces}"/>
+    <jar destfile="${temp.jar.path.interfaces.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${cloudalbum.output.dir}"/>
+      <zipfileset file="${path.variable.maven_repository}/com/esotericsoftware/kryo/3.0.0/kryo-3.0.0.jar"/>
+      <zipfileset file="${path.variable.maven_repository}/com/esotericsoftware/reflectasm/1.10.0/reflectasm-1.10.0.jar"/>
+      <zipfileset file="${path.variable.maven_repository}/org/ow2/asm/asm/4.2/asm-4.2.jar"/>
+      <zipfileset file="${path.variable.maven_repository}/com/esotericsoftware/minlog/1.3.0/minlog-1.3.0.jar"/>
+      <zipfileset file="${path.variable.maven_repository}/org/objenesis/objenesis/2.1/objenesis-2.1.jar"/>
+      <zipfileset file="${idea.home}/lib/junit-4.11.jar"/>
+      <zipfileset file="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+      <zipfileset file="${idea.home}/lib/hamcrest-library-1.3.jar"/>
     </jar>
-    <copy file="${temp.jar.path.ds-lab-03-interpreter.jar}" tofile="${artifact.temp.output.ds-lab-03-interpreter:jar}/ds-lab-03-interpreter.jar"/>
+    <copy file="${temp.jar.path.interfaces.jar}" tofile="${artifact.temp.output.interfaces}/interfaces.jar"/>
   </target>
   
-  <target name="build.all.artifacts" depends="artifact.ds-lab-03-interpreter:jar" description="Build all artifacts">
-    <mkdir dir="${artifact.output.ds-lab-03-interpreter:jar}"/>
-    <copy todir="${artifact.output.ds-lab-03-interpreter:jar}">
-      <fileset dir="${artifact.temp.output.ds-lab-03-interpreter:jar}"/>
+  <target name="build.all.artifacts" depends="artifact.interfaces" description="Build all artifacts">
+    <mkdir dir="${artifact.output.interfaces}"/>
+    <copy todir="${artifact.output.interfaces}">
+      <fileset dir="${artifact.temp.output.interfaces}"/>
     </copy>
     
     <!-- Delete temporary files -->
