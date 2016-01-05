@@ -237,13 +237,13 @@
     <property name="artifact.temp.output.interfaces" value="${artifacts.temp.dir}/interfaces"/>
     <mkdir dir="${artifact.temp.output.interfaces}"/>
     <jar destfile="${temp.jar.path.interfaces.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
-      <zipfileset dir="${cloudalbum.output.dir}"/>
-      <zipfileset file="${path.variable.maven_repository}/com/esotericsoftware/kryo/3.0.0/kryo-3.0.0.jar"/>
-      <zipfileset file="${path.variable.maven_repository}/com/esotericsoftware/reflectasm/1.10.0/reflectasm-1.10.0.jar"/>
-      <zipfileset file="${path.variable.maven_repository}/org/ow2/asm/asm/4.2/asm-4.2.jar"/>
-      <zipfileset file="${path.variable.maven_repository}/com/esotericsoftware/minlog/1.3.0/minlog-1.3.0.jar"/>
-      <zipfileset file="${path.variable.maven_repository}/org/objenesis/objenesis/2.1/objenesis-2.1.jar"/>
-      <zipfileset file="${idea.home}/lib/junit-4.11.jar"/>
+        <zipfileset dir="${cloudalbum.output.dir}"/>
+   <pathelement location="${basedir}/lib/kryo-shaded-3.0.0.jar"/>
+
+    <pathelement location="${basedir}/lib/minlog-1.3.0.jar"/>
+    <pathelement location="${basedir}/lib/objenesis-2.1.jar"/>
+
+     <zipfileset file="${idea.home}/lib/junit-4.11.jar"/>
       <zipfileset file="${idea.home}/lib/hamcrest-core-1.3.jar"/>
       <zipfileset file="${idea.home}/lib/hamcrest-library-1.3.jar"/>
     </jar>

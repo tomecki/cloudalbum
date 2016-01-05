@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 source Env.sh
 java -classpath /home/tomek/dev/u2/sr/cloudalbum/out/production/cloudalbum/ \
     $CLOUDALBUM_JAVA_OPTS \
