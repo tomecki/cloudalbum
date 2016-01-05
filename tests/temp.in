@@ -1,0 +1,2 @@
+SELECT (SELECT avg(cpu_usage) WHERE false) AS smth
+SELECT num_cores AaS lolo

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+#java -cp $PWD/bin:lib/cup.jar:lib/JLex.jar cloudatlas.interpreter.Main
+java -jar ds-lab-03-interpreter.jar
