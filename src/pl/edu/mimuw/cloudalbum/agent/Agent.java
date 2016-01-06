@@ -52,7 +52,7 @@ public class Agent {
     }
     public static Map<String, String> configuration = new HashMap<>();
     public static void main(String args[]){
-        readConfiguration(args.length==0?"settings.conf" : args[0]);
+        readConfiguration(args.length==0?"settings.conf" : args[1]);
         ExecutorService ex = Executors.newFixedThreadPool(2);
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));

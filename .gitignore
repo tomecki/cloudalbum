@@ -1,4 +1,5 @@
 *.jar
 *.class
 Env.sh
+build.properties
 build.xml
