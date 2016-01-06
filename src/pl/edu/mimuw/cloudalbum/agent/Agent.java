@@ -5,6 +5,7 @@ import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
 import pl.edu.mimuw.cloudatlas.model.Attribute;
 import pl.edu.mimuw.cloudatlas.model.AttributesMap;
 import pl.edu.mimuw.cloudatlas.model.Value;
+import pl.edu.mimuw.cloudatlas.model.ZMI;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -26,11 +27,12 @@ import java.util.logging.Logger;
 public class Agent {
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
     private static class FetcherUpdater implements Runnable {
+        private ZMI zmi;
         private Fetcher fetcher;
         private AttributesMap currentState;
 
-        public FetcherUpdater(Fetcher fetcher) {
-            this.fetcher = fetcher;
+        public FetcherUpdater(Fetcher fetcher, ZMI zmi) {
+            this.fetcher = fetcher; this.zmi = zmi;
         }
 
         @Override
@@ -39,8 +41,8 @@ public class Agent {
             for(;;){
                 synchronized(this){
                     currentState = Agent.getLocalStats(fetcher);
+                    zmi.getAttributes().addOrChange(currentState);
                 }
-
                 logger.log(Level.INFO, "Local stats fetched");
                 try {
                     Thread.sleep(delay);
@@ -50,14 +52,16 @@ public class Agent {
             }
         }
     }
+
     public static Map<String, String> configuration = new HashMap<>();
     public static void main(String args[]){
         readConfiguration(args.length==0?"settings.conf" : args[1]);
         ExecutorService ex = Executors.newFixedThreadPool(2);
+        ZMI zmi = new ZMI();
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
-            ex.submit(new FetcherUpdater(fetcher));
+            ex.submit(new FetcherUpdater(fetcher, zmi));
 
         } catch (Exception e) {
             System.err.println("FibonacciClient exception:");
