@@ -126,7 +126,7 @@ public class FetcherModule implements Fetcher {
             FetcherModule engine = new FetcherModule();
             Fetcher stub =
                     (Fetcher) UnicastRemoteObject.exportObject(engine, 0);
-            Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             registry.rebind(name, stub);
             System.out.println("ComputeEngine bound");
         } catch (Exception e) {

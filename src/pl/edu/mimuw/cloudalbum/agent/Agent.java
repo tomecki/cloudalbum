@@ -55,7 +55,7 @@ public class Agent {
         readConfiguration(args.length==0?"settings.conf" : args[0]);
         ExecutorService ex = Executors.newFixedThreadPool(2);
         try {
-            Registry registry = LocateRegistry.getRegistry("localhost");
+            Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
             ex.submit(new FetcherUpdater(fetcher));
 
