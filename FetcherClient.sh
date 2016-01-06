@@ -7,4 +7,4 @@ java -classpath $CLOUDALBUMPATH \
     -Djava.rmi.server.hostname=localhost \
     -Djava.rmi.server.codebase=file:$BASEDIR/out/production/cloudalbum/ \
     -Djava.security.policy=FetcherServer.policy \
-	  pl.edu.mimuw.cloudalbum.agent.Agent settings.conf
+	  pl.edu.mimuw.cloudalbum.agent.Agent 1097 settings.conf

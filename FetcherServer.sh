@@ -6,4 +6,4 @@ java -classpath $BASEDIR/out/production/cloudalbum/ \
     -Djava.rmi.server.hostname=localhost \
     -Djava.rmi.server.codebase=file:$BASEDIR/out/production/cloudalbum/ \
     -Djava.security.policy=FetcherServer.policy \
-	  pl.edu.mimuw.cloudalbum.fetcher.FetcherModule
+    pl.edu.mimuw.cloudalbum.fetcher.FetcherModule 1097
