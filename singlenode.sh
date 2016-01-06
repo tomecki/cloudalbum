@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 tmux kill-session -t c
-echo "running node from"`pwd`
+echo "running node from"`pwd`" on "`hostname`
 cd sr/cloudalbum
 ./Registry.sh
 tmux new -s c -d
