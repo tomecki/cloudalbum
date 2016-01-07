@@ -2,10 +2,7 @@ package pl.edu.mimuw.cloudalbum.agent;
 
 import pl.edu.mimuw.cloudalbum.eda.Dispatcher;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
-import pl.edu.mimuw.cloudatlas.model.Attribute;
-import pl.edu.mimuw.cloudatlas.model.AttributesMap;
-import pl.edu.mimuw.cloudatlas.model.Value;
-import pl.edu.mimuw.cloudatlas.model.ZMI;
+import pl.edu.mimuw.cloudatlas.model.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -58,6 +55,8 @@ public class Agent {
         readConfiguration(args.length==0?"settings.conf" : args[1]);
         ExecutorService ex = Executors.newFixedThreadPool(2);
         ZMI zmi = new ZMI();
+        ZMI root = createZMIHierarchy(configuration.get("path"));
+        logger.log(Level.INFO, root.toString());
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
@@ -67,6 +66,21 @@ public class Agent {
             System.err.println("FibonacciClient exception:");
             e.printStackTrace();
         }
+    }
+
+    private static ZMI createZMIHierarchy(String arg) {
+        String[] path = arg.split("/");
+        ZMI root = new ZMI();
+//        ZMI absoluteRoot = root;
+        root.getAttributes().add("name", new ValueString(path[1]));
+        for(int i = 2; i<path.length; ++i){
+            ZMI next = new ZMI();
+            next.getAttributes().add("name", new ValueString(path[i]));
+            root.addSon(next);
+            next.setFather(root);
+            root = next;
+        }
+        return root;
     }
 
     private static void readConfiguration(String arg) {
