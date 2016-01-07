@@ -68,10 +68,9 @@ public class Agent {
         }
     }
 
-    private static ZMI createZMIHierarchy(String arg) {
+    public static ZMI createZMIHierarchy(String arg) {
         String[] path = arg.split("/");
         ZMI root = new ZMI();
-//        ZMI absoluteRoot = root;
         root.getAttributes().add("name", new ValueString(path[1]));
         for(int i = 2; i<path.length; ++i){
             ZMI next = new ZMI();
