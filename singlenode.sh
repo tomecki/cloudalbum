@@ -2,7 +2,13 @@
 tmux kill-session -t c
 echo "running node from"`pwd`" on "`hostname`
 cd sr/cloudalbum
-./Registry.sh
+nmap -p1097 localhost | grep open
+
+if [ $? -eq 1 ]
+then
+    ./Registry.sh
+fi
+
 tmux new -s c -d
 tmux split-window -h -t c:0.0
 tmux split-window -h -t c:0.1
