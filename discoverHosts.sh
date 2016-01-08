@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-import socket
+import socket, os
 for color in reversed(['red', 'cyan', 'violet', 'blue', 'yellow', 'khaki', 'green', 'pink', 'brown', 'orange']):
     for number in range(1, 16):
         hname = color+str(number).zfill(2)
@@ -9,8 +9,8 @@ for color in reversed(['red', 'cyan', 'violet', 'blue', 'yellow', 'khaki', 'gree
         s.settimeout(0.2)
         try:
             s.connect((hname, 22))
-            print hname, 
-            print os.system("`host -4 "+hname+" | head -n 1 | cut -d' ' -f 4`")
+            print hname, socket.gethostbyname(hname)
+            #os.system("host -4 "+hname+" | head -n 1 | cut -d' ' -f 4")
         except socket.error as e:
             pass
         finally:
