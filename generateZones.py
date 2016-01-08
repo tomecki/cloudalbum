@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 
-import sys, itertools
+import sys, itertools, os, random
+
+def randomContacts(roomExclude, dr):
+    r = []
+    for (room, computers) in dr:
+        if room!=roomExclude:
+            r += [random.choice(computers[:3])]
+    return ",".join(r)
 
 def main():
     content = sys.stdin.readlines()
@@ -8,12 +15,15 @@ def main():
     rooms = itertools.groupby(content, lambda x: x[:-2])
     rooms = {x[0]: [y for y in x[1]] for x in rooms}
     total = open("selectedHosts", "wb")
-    for (room, computers) in filter(lambda (k,v): len(v)>3, rooms.iteritems())[:2]:
+    dr = filter(lambda (k,v): len(v)>3, rooms.iteritems())[:2]
+    for (room, computers) in dr:
         for computer in computers[:3]:
-            f = open('conf/'+computer, 'w')
-            f.write(",".join(filter(lambda x: x!=computer, computers[:3])))
+            f = open('conf/'+computer, 'wb')
+            f.write("contacts:"+"0>"+",".join(filter(lambda x: x!=computer, computers[:3]))+"#1>"+randomContacts(room, dr)+"\n")
+            f.write("path:/uw/mimuw/"+room+"/"+computer+"\n")
             f.close()
             total.write(computer+"\n")
+            os.system("cat settings.conf >> conf/"+computer)
     total.close()
 
 
