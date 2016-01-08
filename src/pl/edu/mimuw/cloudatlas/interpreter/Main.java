@@ -90,7 +90,7 @@ public class Main {
 		}
 	}
 	
-	private static ValueContact createContact(String path, byte ip1, byte ip2, byte ip3, byte ip4)
+	public static ValueContact createContact(String path, byte ip1, byte ip2, byte ip3, byte ip4)
 			throws UnknownHostException {
 		return new ValueContact(new PathName(path), InetAddress.getByAddress(new byte[] {
 			ip1, ip2, ip3, ip4
@@ -113,9 +113,6 @@ public class Main {
 		root.getAttributes().add("timestamp", new ValueTime("2012/11/09 20:10:17.342"));
 		root.getAttributes().add("contacts", new ValueSet(TypePrimitive.CONTACT));
 		root.getAttributes().add("cardinality", new ValueInt(0l));
-
-
-
 
 		ZMI uw = new ZMI(root);
 		root.addSon(uw);
