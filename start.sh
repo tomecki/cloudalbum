@@ -7,7 +7,7 @@ then
     ./generateZones.py < hosts
 fi
 
-#ant
+ant
 cat selectedHosts | cut -d ',' -f 1 | cut -d '/' -f 5 > hostbuffer
 
 while read  nodehost
