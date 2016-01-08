@@ -129,8 +129,9 @@ public class Agent {
         }
     }
 
-    private static ValueContact getAddrFromString(String a, String path) {
+    private static ValueContact getAddrFromString(String path, String a) {
         String[] b = a.split(".");
+
         byte[] bs = new byte[4];
         for(int i=0; i<4; ++i){
             bs[i] = Byte.valueOf(b[i]);
