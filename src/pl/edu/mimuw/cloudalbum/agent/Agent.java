@@ -130,6 +130,7 @@ public class Agent {
     }
 
     private static ValueContact getAddrFromString(String path, String a) {
+        logger.log(Level.INFO, "PATH: " + path + " A: "+a);
         String[] b = a.split(".");
 
         byte[] bs = new byte[4];
