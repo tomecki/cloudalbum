@@ -12,5 +12,5 @@ ant
 while read nodehost
 do
     ssh "td366732@"$nodehost < singlenode.sh
-done < hosts
+done < selectedHosts
 
