@@ -113,7 +113,10 @@ public class Main {
 		root.getAttributes().add("timestamp", new ValueTime("2012/11/09 20:10:17.342"));
 		root.getAttributes().add("contacts", new ValueSet(TypePrimitive.CONTACT));
 		root.getAttributes().add("cardinality", new ValueInt(0l));
-		
+
+
+
+
 		ZMI uw = new ZMI(root);
 		root.addSon(uw);
 		uw.getAttributes().add("level", new ValueInt(1l));

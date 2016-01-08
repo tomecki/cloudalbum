@@ -56,14 +56,28 @@ public class Agent {
         ExecutorService ex = Executors.newFixedThreadPool(2);
         ZMI zmi = new ZMI();
         ZMI root = createZMIHierarchy(configuration.get("path"));
+        fillContacts(root, configuration);
         logger.log(Level.INFO, root.toString());
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
             ex.submit(new FetcherUpdater(fetcher, zmi));
-
         } catch (Exception e) {
             System.err.println("FibonacciClient exception:");
+            e.printStackTrace();
+        }
+    }
+
+    private static void fillContacts(ZMI root, Map<String, String> configuration) {
+        try{
+            String[] contacts = configuration.get("contacts").split("#");
+            root = root.getFather();
+            for(String level: contacts){
+                String levelContacts = level.split(">")[1];
+                root.getAttributes().add("contacts", new ValueSet())
+            }
+        } catch(Exception e){
+            logger.log(Level.SEVERE, "Error creating contacts configuration from file!");
             e.printStackTrace();
         }
     }

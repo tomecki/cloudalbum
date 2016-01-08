@@ -9,7 +9,8 @@ for color in reversed(['red', 'cyan', 'violet', 'blue', 'yellow', 'khaki', 'gree
         s.settimeout(0.2)
         try:
             s.connect((hname, 22))
-            print hname
+            print hname, 
+            print os.system("`host -4 "+hname+" | head -n 1 | cut -d' ' -f 4`")
         except socket.error as e:
             pass
         finally:
