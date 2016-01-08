@@ -82,7 +82,8 @@ public class Agent {
                 for(String contact: levelContacts){
                     set.add(addresses.get(contact));
                 }
-                root.getAttributes().add("contacts", new ValueSet(set, set.iterator().next().getType()));
+                logger.log(Level.INFO, "Adding contacts for level: "+ root.getAttributes().get("name")+ " -> " + set.toString());
+                root.getAttributes().add("contacts", new ValueSet(set, TypePrimitive.CONTACT));
             }
         } catch(Exception e){
             logger.log(Level.SEVERE, "Error creating contacts configuration from file!");
