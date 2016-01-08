@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class Agent {
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
-    private static Hashtable<String, ValueContact> addresses;
+    private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
 
     private static class FetcherUpdater implements Runnable {
         private ZMI zmi;
