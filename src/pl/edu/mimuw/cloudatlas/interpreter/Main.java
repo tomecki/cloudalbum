@@ -96,6 +96,10 @@ public class Main {
 			ip1, ip2, ip3, ip4
 		}));
 	}
+
+    public static ValueContact createContact(String path, String host) throws UnknownHostException {
+        return new ValueContact(new PathName(path), InetAddress.getByName(host));
+    }
 	
 	public static ZMI createTestHierarchy() throws ParseException, UnknownHostException {
 		ValueContact violet07Contact = createContact("/uw/violet07", (byte)10, (byte)1, (byte)1, (byte)10);

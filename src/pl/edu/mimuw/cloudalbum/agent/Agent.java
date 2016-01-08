@@ -131,17 +131,12 @@ public class Agent {
 
     private static ValueContact getAddrFromString(String path, String a) {
         logger.log(Level.INFO, "PATH: " + path + " A: "+a);
-        String[] b = a.split("\\.");
 
-        byte[] bs = new byte[4];
-        for(int i=0; i<4; ++i){
-            bs[i] = Byte.valueOf(b[i]);
-        }
         ValueContact r = null;
         try {
-            r = Main.createContact(path, bs[0], bs[1], bs[2], bs[3]);
+            r = Main.createContact(path, a);
         } catch (UnknownHostException e) {
-            logger.log(Level.SEVERE, "Host "+ b + "down" + e.getMessage());
+            logger.log(Level.SEVERE, "Host "+ a + "down" + e.getMessage());
         }
         return r;
     }

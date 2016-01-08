@@ -14,5 +14,6 @@ while read  nodehost
 do
     echo "running singlenode script on "$nodehost
     ssh "td366732@"$nodehost < singlenode.sh
+    echo "singlenode continuing"
 done < hostbuffer 
 rm hostbuffer

@@ -6,9 +6,11 @@ nmap -p1097 localhost | grep open
 
 if [ $? -eq 1 ]
 then
+    echo "running registry on "`hostname`
     ./Registry.sh
 fi
 
+echo "starting tmux session on "`hostname`
 tmux new -s c -d
 tmux split-window -h -t c:0.0
 tmux split-window -h -t c:0.1
@@ -16,5 +18,5 @@ tmux send-keys -t c:0.0 './FetcherServer.sh' C-m
 sleep 2
 tmux send-keys -t c:0.1 './Agent.sh conf/`hostname`' C-m
 tmux send-keys -t c:0.2 'ls' C-m
-
+echo "tmux session routine on "`hostname`"finished"
 
