@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 cd sr/cloudalbum
 git pull
-if [ -e hosts ] 
+if [ ! -f hosts ] 
 then
     ./discoverHosts.sh > hosts
     ./generateZones.py < hosts
