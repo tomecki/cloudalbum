@@ -72,7 +72,7 @@ public class Agent {
         }
     }
 
-    private static void fillContacts(ZMI root, Map<String, String> configuration) {
+    public static void fillContacts(ZMI root, Map<String, String> configuration) {
         try{
             String[] contacts = configuration.get("contacts").split("#");
             root = root.getFather();
@@ -105,7 +105,7 @@ public class Agent {
         return root;
     }
 
-    private static void readConfiguration(String arg) {
+    public static void readConfiguration(String arg) {
         try {
             logger.log(Level.INFO, "Reading selectedHosts addreses");
             List<String> addr = Files.readAllLines(Paths.get("selectedHosts"), Charset.defaultCharset());

@@ -1,5 +1,6 @@
 package pl.edu.mimuw.cloudalbum.tests;
 
+import org.junit.Assert;
 import org.junit.Test;
 import pl.edu.mimuw.cloudalbum.agent.Agent;
 import pl.edu.mimuw.cloudatlas.model.ZMI;
@@ -18,5 +19,12 @@ public class AgentTest {
         ZMI root = Agent.createZMIHierarchy(path);
         logger.log(Level.INFO, root.toString());
         logger.log(Level.INFO, root.getFather().toString());
+    }
+    @Test
+    public void readConfiguration(){
+        Agent.readConfiguration("conf/yellow10");
+        ZMI root = Agent.createZMIHierarchy(Agent.configuration.get("path"));
+        Agent.fillContacts(root, Agent.configuration);
+        Assert.assertTrue(1==1);
     }
 }

@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
+set -v
 cd sr/cloudalbum
 git pull
 if [ ! -f hosts ] 
 then
+    echo "discovering hosts"
     ./discoverHosts.sh > hosts
+    echo "total hosts discovered: "
+    cat hosts
     ./generateZones.py < hosts
 fi
 
@@ -17,3 +21,4 @@ do
     echo "singlenode continuing"
 done < hostbuffer 
 rm hostbuffer
+set +v
