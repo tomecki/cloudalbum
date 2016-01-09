@@ -60,11 +60,12 @@ public class Agent {
     public static Map<String, String> configuration = new HashMap<>();
     public static void main(String args[]){
         readConfiguration(args.length==0?"settings.conf" : args[1]);
-        ExecutorService ex = Executors.newFixedThreadPool(2);
+
         ZMI zmi = new ZMI();
         ZMI root = createZMIHierarchy(configuration.get("path"));
         fillContacts(root, configuration);
         logger.log(Level.INFO, "Configuration finished: "+ root.toString()+ ": "+ root.getAttributes().toString());
+        ExecutorService ex = Executors.newFixedThreadPool(1);
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
