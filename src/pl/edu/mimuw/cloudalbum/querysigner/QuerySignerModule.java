@@ -21,7 +21,6 @@ public class QuerySignerModule implements QuerySigner {
         return new SignedEvent(o);
     }
 
-
     public static void main(String[] args) {
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());

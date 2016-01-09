@@ -30,7 +30,6 @@ public class Agent {
     public static Map<String, String> configuration = new HashMap<>();
     public static void main(String args[]){
         readConfiguration(args.length==0?"settings.conf" : args[1]);
-
         ZMI zmi = new ZMI();
         ZMI root = createZMIHierarchy(configuration.get("path"));
         fillContacts(root, configuration);
