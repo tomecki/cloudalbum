@@ -5,6 +5,7 @@ import pl.edu.mimuw.cloudalbum.eda.Event;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.eda.interfaces.Message;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 
 /**
@@ -13,5 +14,5 @@ import java.rmi.Remote;
 
 // TODO: define Query Signer interface
 public interface QuerySigner extends Remote {
-    public SignedEvent signEvent(Event m);
+    public <E extends Serializable> SignedEvent<E> signEvent(E e);
 }

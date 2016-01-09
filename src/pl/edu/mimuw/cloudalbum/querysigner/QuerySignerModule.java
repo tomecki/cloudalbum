@@ -4,6 +4,7 @@ import pl.edu.mimuw.cloudalbum.eda.Event;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 
+import java.io.Serializable;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,9 +16,12 @@ import java.util.logging.Logger;
  */
 public class QuerySignerModule implements QuerySigner {
     private static Logger logger = Logger.getLogger(QuerySignerModule.class.getName());
-    public SignedEvent signEvent(Event m) {
-        return SignedEvent.sign(m);
+
+    public <E extends Serializable> SignedEvent<E> signEvent(E o) {
+        return new SignedEvent(o);
     }
+
+
     public static void main(String[] args) {
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());

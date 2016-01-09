@@ -2,18 +2,19 @@ package pl.edu.mimuw.cloudalbum.eda;
 
 import pl.edu.mimuw.cloudalbum.eda.interfaces.Message;
 
+import java.io.Serializable;
+
 /**
  * Created by tomek on 30.12.15.
  */
-public class SignedEvent extends Event {
-    private SignedEvent(Event m) {
+public class SignedEvent<E extends Serializable> implements Serializable {
+    public SignedEvent(E e) {
         super();
-        setHash(String.valueOf(m.hashCode()));
+        setMessage(e);
+        setHash(String.valueOf(e.hashCode()));
     }
 
-    public static SignedEvent sign(Event m){
-        return new SignedEvent(m);
-    }
+    private E message;
 
     public String getHash() {
         return hash;
@@ -24,4 +25,12 @@ public class SignedEvent extends Event {
     }
 
     private String hash;
+
+    public E getMessage() {
+        return message;
+    }
+
+    public void setMessage(E message) {
+        this.message = message;
+    }
 }

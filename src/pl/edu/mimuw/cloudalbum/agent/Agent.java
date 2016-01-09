@@ -27,52 +27,14 @@ public class Agent {
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
     private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
 
-    private static class FetcherUpdater implements Runnable {
-        private ZMI zmi;
-        private Fetcher fetcher;
-        private AttributesMap currentState;
-
-        public FetcherUpdater(Fetcher fetcher, ZMI zmi) {
-            this.fetcher = fetcher; this.zmi = zmi;
-            logger.log(Level.INFO, "FetcherUpdater initiated with ZMI: "+ zmi.toString());
-        }
-
-        @Override
-        public void run() {
-            long delay = 2000;
-            try {
-                delay = Long.parseLong(Agent.configuration.get("fetcherFrequency"));
-            } catch(Exception e){
-                logger.log(Level.WARNING, "Configuration error: no fetcherFrequency set up");
-            }
-
-            logger.log(Level.INFO, "FetcherUpdater thread started");
-
-            for(;;){
-                logger.log(Level.INFO, "Fetching local stats");
-                synchronized(this){
-                    currentState = Agent.getLocalStats(fetcher);
-                    logger.log(Level.INFO, "Local stats fetched, updating");
-                    zmi.getAttributes().addOrChange(currentState);
-                }
-                logger.log(Level.INFO, "Fetching local stats finished");
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     public static Map<String, String> configuration = new HashMap<>();
     public static void main(String args[]){
-        //readConfiguration(args.length==0?"settings.conf" : args[1]);
+        readConfiguration(args.length==0?"settings.conf" : args[1]);
 
         ZMI zmi = new ZMI();
-        //ZMI root = createZMIHierarchy(configuration.get("path"));
-        //fillContacts(root, configuration);
-        //logger.log(Level.INFO, "Configuration finished: "+ root.toString()+ ": "+ root.getAttributes().toString());
+        ZMI root = createZMIHierarchy(configuration.get("path"));
+        fillContacts(root, configuration);
+        logger.log(Level.INFO, "Configuration finished: "+ root.toString()+ ": "+ root.getAttributes().toString());
         ExecutorService ex = Executors.newFixedThreadPool(1);
         try {
             logger.log(Level.INFO, "Binding to registry");
@@ -159,28 +121,4 @@ public class Agent {
         return r;
     }
 
-
-
-    private static AttributesMap getLocalStats(Fetcher fetcher){
-        AttributesMap am = null;
-        try {
-            logger.log(Level.INFO, "Fetching local stats " + fetcher.getClass().toString());
-            am = fetcher.getLocalStats();
-            logger.log(Level.INFO, "Local stats fetched: "+ am.toString());
-
-            Iterator<Map.Entry<Attribute, Value>> it;
-            it = am.iterator();
-            if(am!=null) {
-                while (it.hasNext()) {
-                    Map.Entry<Attribute, Value> e = it.next();
-                    System.out.println(e.getKey().getName() + " " + e.getValue().toString());
-                }
-            }
-            return am;
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
 }
