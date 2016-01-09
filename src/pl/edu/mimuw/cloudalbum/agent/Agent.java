@@ -78,8 +78,6 @@ public class Agent {
             root = root.getFather();
             for(String level: contacts){
                 String[] levelContacts = (level.split(">")[1]).split(",");
-                logger.log(Level.INFO, Arrays.toString(levelContacts));
-                logger.log(Level.INFO, addresses.toString());
                 Set<Value> set = new HashSet<>();
                 for(String contact: levelContacts){
                     set.add(addresses.get(contact));
@@ -113,7 +111,7 @@ public class Agent {
             List<String> addr = Files.readAllLines(Paths.get("selectedHosts"), Charset.defaultCharset());
             for (String a: addr){
                 String[] as = a.split(",");
-                addresses.put(new PathName(as[0]).getName(), getAddrFromString(as[0], as[1]));
+                addresses.put(new PathName(as[0]).getSingletonName(), getAddrFromString(as[0], as[1]));
                 logger.log(Level.INFO, "Read host: "+ addresses.get(new PathName(as[0]).getName()));
             }
 
