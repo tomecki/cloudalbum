@@ -39,12 +39,15 @@ public class Agent {
         @Override
         public void run() {
             long delay = Long.parseLong(Agent.configuration.get("fetcherFrequency"));
+            logger.log(Level.INFO, "FetcherUpdater thread started");
             for(;;){
+                logger.log(Level.INFO, "Fetching local stats");
                 synchronized(this){
                     currentState = Agent.getLocalStats(fetcher);
+                    logger.log(Level.INFO, "Local stats fetched, updating");
                     zmi.getAttributes().addOrChange(currentState);
                 }
-                logger.log(Level.INFO, "Local stats fetched");
+                logger.log(Level.INFO, "Fetching local stats finished");
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
@@ -61,14 +64,13 @@ public class Agent {
         ZMI zmi = new ZMI();
         ZMI root = createZMIHierarchy(configuration.get("path"));
         fillContacts(root, configuration);
-        logger.log(Level.INFO, root.toString());
+        logger.log(Level.INFO, "Configuration finished: "+ root.toString()+ ": "+ root.getAttributes().toString());
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
             ex.submit(new FetcherUpdater(fetcher, zmi));
         } catch (Exception e) {
-            System.err.println("FibonacciClient exception:");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -84,6 +86,7 @@ public class Agent {
                 }
                 logger.log(Level.INFO, "Adding contacts for level: "+ root.getAttributes().get("name")+ " -> " + set.toString());
                 root.getAttributes().addOrChange("contacts", new ValueSet(set, TypePrimitive.CONTACT));
+                root = root.getFather();
             }
         } catch(Exception e){
             logger.log(Level.SEVERE, "Error creating contacts configuration from file!");
