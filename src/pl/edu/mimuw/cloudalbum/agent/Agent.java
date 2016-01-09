@@ -34,12 +34,20 @@ public class Agent {
 
         public FetcherUpdater(Fetcher fetcher, ZMI zmi) {
             this.fetcher = fetcher; this.zmi = zmi;
+            logger.log(Level.INFO, "FetcherUpdater initiated with ZMI: "+ zmi.toString());
         }
 
         @Override
         public void run() {
-            long delay = Long.parseLong(Agent.configuration.get("fetcherFrequency"));
+            long delay = 2000;
+            try {
+                delay = Long.parseLong(Agent.configuration.get("fetcherFrequency"));
+            } catch(Exception e){
+                logger.log(Level.WARNING, "Configuration error: no fetcherFrequency set up");
+            }
+
             logger.log(Level.INFO, "FetcherUpdater thread started");
+
             for(;;){
                 logger.log(Level.INFO, "Fetching local stats");
                 synchronized(this){
@@ -59,17 +67,22 @@ public class Agent {
 
     public static Map<String, String> configuration = new HashMap<>();
     public static void main(String args[]){
-        readConfiguration(args.length==0?"settings.conf" : args[1]);
+        //readConfiguration(args.length==0?"settings.conf" : args[1]);
 
         ZMI zmi = new ZMI();
-        ZMI root = createZMIHierarchy(configuration.get("path"));
-        fillContacts(root, configuration);
-        logger.log(Level.INFO, "Configuration finished: "+ root.toString()+ ": "+ root.getAttributes().toString());
+        //ZMI root = createZMIHierarchy(configuration.get("path"));
+        //fillContacts(root, configuration);
+        //logger.log(Level.INFO, "Configuration finished: "+ root.toString()+ ": "+ root.getAttributes().toString());
         ExecutorService ex = Executors.newFixedThreadPool(1);
         try {
+            logger.log(Level.INFO, "Binding to registry");
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
+            logger.log(Level.INFO, "Registry found: "+ registry.toString());
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
+            logger.log(Level.INFO, "Stub looked up");
             ex.submit(new FetcherUpdater(fetcher, zmi));
+            logger.log(Level.INFO, "FetcherUpdater thread submitted");
+
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
         }

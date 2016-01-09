@@ -33,22 +33,12 @@ public class FetcherModule implements Fetcher {
         AttributesMap result = new AttributesMap();
         try{
             result.add(new Attribute("hostname"), new ValueString(InetAddress.getLocalHost().getHostName()));
-        } catch(Exception e){ }
-        try{
             result.add(new Attribute("num_cores"), new ValueInt((long) Runtime.getRuntime().availableProcessors()));
-        } catch(Exception e) {}
-        try{
             OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            try {
-                result.add(new Attribute("cpu_load"), new ValueDouble(operatingSystemMXBean.getSystemCpuLoad()));
-            } catch(Exception e) {}
-            try{
-                result.add(new Attribute("free_disk"), new ValueInt(operatingSystemMXBean.getFreePhysicalMemorySize()));
-            } catch(Exception e) {}
+            result.add(new Attribute("cpu_load"), new ValueDouble(operatingSystemMXBean.getSystemCpuLoad()));
+            result.add(new Attribute("free_disk"), new ValueInt(operatingSystemMXBean.getFreePhysicalMemorySize()));
             result.add(new Attribute("free_swap"), new ValueInt(operatingSystemMXBean.getFreeSwapSpaceSize()));
             result.add(new Attribute("total_swap"), new ValueInt(operatingSystemMXBean.getTotalSwapSpaceSize()));
-        } catch(Exception e){}
-        try{
             result.add(new Attribute("total_disk"), new ValueInt(new File("/").getTotalSpace()));
             result.add(new Attribute("total_ram"), new ValueInt(Runtime.getRuntime().totalMemory()));
             result.add(new Attribute("free_ram"), new ValueInt(Runtime.getRuntime().freeMemory()));
@@ -128,10 +118,9 @@ public class FetcherModule implements Fetcher {
                     (Fetcher) UnicastRemoteObject.exportObject(engine, 0);
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             registry.rebind(name, stub);
-            System.out.println("ComputeEngine bound");
+            System.out.println("FetcherModule bound");
         } catch (Exception e) {
-            System.err.println("ComputeEngine exception:");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
