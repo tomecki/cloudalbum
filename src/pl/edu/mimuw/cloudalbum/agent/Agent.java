@@ -79,6 +79,7 @@ public class Agent {
             for(String level: contacts){
                 String[] levelContacts = (level.split(">")[1]).split(",");
                 logger.log(Level.INFO, Arrays.toString(levelContacts));
+                logger.log(Level.INFO, addresses.toString());
                 Set<Value> set = new HashSet<>();
                 for(String contact: levelContacts){
                     set.add(addresses.get(contact));
