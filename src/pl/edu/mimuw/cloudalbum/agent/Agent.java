@@ -95,9 +95,7 @@ public class Agent {
 
             logger.log(Level.INFO, "Reading configuration from path: "+ arg);
             List<String> lines = Files.readAllLines(Paths.get(arg), Charset.defaultCharset());
-
             for(String line: lines){
-
                 String[] arr = line.split(":");
                 logger.log(Level.INFO, "Reading configuration entry: " + line);
                 configuration.put(arr[0], arr[1]);
