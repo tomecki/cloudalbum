@@ -8,4 +8,4 @@ $JAVA_ENV -classpath $CLOUDALBUMPATH \
     -Djava.rmi.server.hostname=localhost \
     -Djava.rmi.server.codebase=file:$BASEDIR/out/production/cloudalbum/ \
     -Djava.security.policy=FetcherServer.policy \
-	  pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule
+	  pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule &
