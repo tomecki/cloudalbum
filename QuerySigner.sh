@@ -9,4 +9,4 @@ tmux send-keys -t q '$JAVA_ENV -classpath $CLOUDALBUMPATH \
     -Djava.rmi.server.hostname=localhost \
     -Djava.rmi.server.codebase=file:$BASEDIR/out/production/cloudalbum/ \
     -Djava.security.policy=FetcherServer.policy \
-	  pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule' C-m
+	  pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule 1097' C-m
