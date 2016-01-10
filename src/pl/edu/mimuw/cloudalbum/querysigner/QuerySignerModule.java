@@ -75,11 +75,14 @@ public class QuerySignerModule implements QuerySigner {
             QuerySignerModule engine = new QuerySignerModule();
             QuerySigner stub =
                     (QuerySigner) UnicastRemoteObject.exportObject(engine, 0);
+            logger.log(Level.INFO, "QuerySignerModule object exported");
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
+            logger.log(Level.INFO, "Registry located at" + Integer.parseInt(args[0]));
             registry.rebind(name, stub);
             logger.log(Level.INFO, "QuerySignerModule bound");
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
+            e.printStackTrace();
         }
     }
 }
