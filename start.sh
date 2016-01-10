@@ -29,7 +29,7 @@ echo "Query Signer up and running at "$queryNode
 
 # Run Agent-Fetcher
 
-for nodehost in `cat hostbuffer`
+for nodehost in `cat hostbuffer |  sed ':a;N;$!ba;s/\n/ /g'`
 do
     echo "running singlenode script on "$nodehost
     ssh "td366732@"$nodehost < singlenode.sh
