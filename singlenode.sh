@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -v
 echo "running node from"`pwd`" on "`hostname`
 
 
