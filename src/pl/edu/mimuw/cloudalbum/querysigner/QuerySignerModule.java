@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,7 +28,7 @@ public class QuerySignerModule implements QuerySigner {
     private static final String PUBLIC_KEY_PATH = "public_key.der";
     private static Logger logger = Logger.getLogger(QuerySignerModule.class.getName());
 
-    public <E extends Serializable> SignedEvent<E> signEvent(E o) {
+    public <E extends Serializable> SignedEvent<E> signEvent(E o) throws RemoteException {
         return new SignedEvent(o);
     }
     private static PublicKey publicKey;
