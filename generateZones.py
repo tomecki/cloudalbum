@@ -16,11 +16,14 @@ def main():
     rooms = itertools.groupby(content.keys(), lambda x: x[:-2])
     rooms = [(r, [c for c in cs]) for (r, cs) in rooms]
     rooms = filter(lambda x: len(x[1])>2, rooms)
+    querySignerHost = rooms[0][0]
+
     for (room, computers) in rooms:
         for c in computers:
             f = open("conf/"+c, "wb")
             f.write("contacts:0>"+",".join(filter(lambda x: x!= c, computers))+"#1>"+randomContacts(room, rooms)+"\n")
             f.write("path:/uw/mimuw/"+room+"/"+c+"\n")
+            f.write("querySigner:"+querySignerHost+"\n")
             f.close()
     f = open("selectedHosts", "wb")
     for (room, cs) in rooms:

@@ -2,10 +2,12 @@ package pl.edu.mimuw.cloudalbum.agent;
 
 import pl.edu.mimuw.cloudalbum.eda.Dispatcher;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
+import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 import pl.edu.mimuw.cloudatlas.interpreter.Main;
 import pl.edu.mimuw.cloudatlas.model.*;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -26,16 +28,17 @@ import java.util.logging.Logger;
 public class Agent {
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
     private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
-
+    public static ZMI zmi;
     public static Map<String, String> configuration = new HashMap<>();
     public static void main(String args[]){
         readConfiguration(args.length==0?"settings.conf" : args[1]);
         ZMI zmi = new ZMI();
-        ZMI root = createZMIHierarchy(configuration.get("path"));
-        fillContacts(root, configuration);
-        logger.log(Level.INFO, "Configuration finished: "+ root.toString()+ ": "+ root.getAttributes().toString());
+        zmi = createZMIHierarchy(configuration.get("path"));
+        fillContacts(zmi, configuration);
+        logger.log(Level.INFO, "Configuration finished: "+ zmi.toString()+ ": "+ zmi.getAttributes().toString());
         ExecutorService ex = Executors.newFixedThreadPool(1);
         try {
+            // ================================ Local fetcher instance
             logger.log(Level.INFO, "Binding to registry");
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             logger.log(Level.INFO, "Registry found: "+ registry.toString());
@@ -44,6 +47,16 @@ public class Agent {
             ex.submit(new FetcherUpdater(fetcher, zmi));
             logger.log(Level.INFO, "FetcherUpdater thread submitted");
 
+            // ================================= Query Signer
+            logger.log(Level.INFO, "Binding to registry");
+            Registry qsRegistry = LocateRegistry.getRegistry(configuration.get("querySigner"), Integer.parseInt(args[0]));
+            logger.log(Level.INFO, "Registry found: "+ registry.toString());
+            QuerySigner querySigner = (QuerySigner) registry.lookup("QuerySignerModule");
+            logger.log(Level.INFO, "Stub looked up");
+            ex.submit(new AgentUpdater(querySigner));
+            logger.log(Level.INFO, "FetcherUpdater thread submitted");
+
+
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
         }
@@ -51,6 +64,8 @@ public class Agent {
 
     public static void fillContacts(ZMI root, Map<String, String> configuration) {
         try{
+            String[] querySigner = configuration.get("querySigner").split(",");
+            root.getAttributes().addOrChange("querySigner", new ValueContact(new PathName(querySigner[0]), InetAddress.getByName(querySigner[1])));
             String[] contacts = configuration.get("contacts").split("#");
             root = root.getFather();
             for(String level: contacts){

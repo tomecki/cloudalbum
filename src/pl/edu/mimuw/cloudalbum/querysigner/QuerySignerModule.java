@@ -4,10 +4,18 @@ import pl.edu.mimuw.cloudalbum.eda.Event;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.Serializable;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,10 +23,46 @@ import java.util.logging.Logger;
  * Created by tomek on 02.01.16.
  */
 public class QuerySignerModule implements QuerySigner {
+    private static final String PRIVATE_KEY_PATH = "private_key.der";
+    private static final String PUBLIC_KEY_PATH = "public_key.der";
     private static Logger logger = Logger.getLogger(QuerySignerModule.class.getName());
 
     public <E extends Serializable> SignedEvent<E> signEvent(E o) {
         return new SignedEvent(o);
+    }
+    private static PublicKey publicKey;
+    private static PrivateKey privateKey;
+    public static PublicKey getPublicKey() throws Exception {
+        if(publicKey == null){
+            File f = new File(PUBLIC_KEY_PATH);
+            FileInputStream fis = new FileInputStream(f);
+            DataInputStream dis = new DataInputStream(fis);
+            byte[] keyBytes = new byte[(int)f.length()];
+            dis.readFully(keyBytes);
+            dis.close();
+            X509EncodedKeySpec spec =
+                    new X509EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            publicKey = kf.generatePublic(spec);
+        }
+        return publicKey;
+    }
+
+    public static PrivateKey getPrivateKey() throws Exception{
+        if(privateKey == null){
+            File f = new File(PRIVATE_KEY_PATH);
+            FileInputStream fis = new FileInputStream(f);
+            DataInputStream dis = new DataInputStream(fis);
+            byte[] keyBytes = new byte[(int)f.length()];
+            dis.readFully(keyBytes);
+            dis.close();
+
+            PKCS8EncodedKeySpec spec =
+                    new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            privateKey = kf.generatePrivate(spec);
+        }
+        return privateKey;
     }
 
     public static void main(String[] args) {

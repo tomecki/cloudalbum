@@ -44,7 +44,6 @@ import java.util.Map.Entry;
  */
 public class AttributesMap implements Iterable<Entry<Attribute, Value>>, Cloneable, Serializable {
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        System.err.println("SERIALIZING + " + this.toString());
         out.writeObject(this.map);
 //        throw new NotImplementedException();
     }
