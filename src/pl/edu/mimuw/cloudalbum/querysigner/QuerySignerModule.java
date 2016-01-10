@@ -74,7 +74,7 @@ public class QuerySignerModule implements QuerySigner {
             String name = "QuerySignerModule";
             QuerySignerModule engine = new QuerySignerModule();
             QuerySigner stub =
-                    (QuerySigner) UnicastRemoteObject.exportObject(engine);
+                    (QuerySigner) UnicastRemoteObject.exportObject(engine, 0);
             Registry registry = LocateRegistry.getRegistry("localhost", Integer.parseInt(args[0]));
             registry.rebind(name, stub);
             logger.log(Level.INFO, "QuerySignerModule bound");
