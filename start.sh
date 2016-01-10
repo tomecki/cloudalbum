@@ -26,14 +26,15 @@ queryNode=`cat hostbuffer | head -n 1`
 echo "Running Query Signer on "$queryNode
 ssh "td366732@"$queryNode < QuerySigner.sh
 echo "Query Signer up and running at "$queryNode
+
 # Run Agent-Fetcher
-while read  nodehost
+
+for nodehost in `cat nodebuffer`
 do
     echo "running singlenode script on "$nodehost
     ssh "td366732@"$nodehost < singlenode.sh
     echo "singlenode continuing"
-done < hostbuffer 
-
+done
 
 rm hostbuffer
 set +v
