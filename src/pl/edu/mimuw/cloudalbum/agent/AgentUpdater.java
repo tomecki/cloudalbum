@@ -25,7 +25,7 @@ public class AgentUpdater implements Runnable {
                 SignedEvent<AttributesMap> am = querySigner.signEvent(Agent.zmi.getAttributes());
                 logger.log(Level.INFO, am.toString());
                 Thread.sleep(Long.parseLong(Agent.configuration.get("agentDelay")));
-            } catch (InterruptedException e) {
+            } catch (Exception  e) {
                 e.printStackTrace();
             }
         }
