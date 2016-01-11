@@ -43,7 +43,7 @@ public class FetcherUpdater implements Runnable {
             synchronized(this){
                 currentState = FetcherUpdater.getLocalStats(fetcher);
                 logger.log(Level.INFO, "Local stats fetched, updating");
-                zmi.getAttributes().addOrChange(currentState);
+                Agent.zmi.getAttributes().addOrChange(currentState);
             }
             logger.log(Level.INFO, "Fetching local stats finished");
             try {
