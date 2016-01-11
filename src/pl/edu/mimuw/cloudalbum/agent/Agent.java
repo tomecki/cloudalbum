@@ -59,6 +59,7 @@ public class Agent {
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
+            e.printStackTrace();
         }
     }
 
