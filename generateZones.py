@@ -30,7 +30,7 @@ def main():
             f.close()
     f = open("selectedHosts", "wb")
     for (room, cs) in rooms:
-        for c in cs:
+        for c in cs[:3]:
             f.write("/uw/mimuw/"+room+"/"+c+","+content[c]+"\n")
     f.close()
 if __name__ == '__main__':
