@@ -16,7 +16,7 @@ def main():
     rooms = itertools.groupby(content.keys(), lambda x: x[:-2])
     rooms = [(r, [c for c in cs]) for (r, cs) in rooms]
     rooms = filter(lambda x: len(x[1])>2, rooms)
-    querySignerHost = rooms[0][0]
+    querySignerHost = rooms[0][1][0]
 
     for (room, computers) in rooms:
         for c in computers:
