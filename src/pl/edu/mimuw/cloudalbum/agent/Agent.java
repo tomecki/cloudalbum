@@ -1,5 +1,6 @@
 package pl.edu.mimuw.cloudalbum.agent;
 
+import com.sun.deploy.util.ArrayUtil;
 import pl.edu.mimuw.cloudalbum.eda.Dispatcher;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
@@ -71,8 +72,10 @@ public class Agent {
             for(String level: contacts){
                 String[] levelContacts = (level.split(">")[1]).split(",");
                 Set<Value> set = new HashSet<>();
+                logger.log(Level.INFO, ArrayUtil.arrayToString(levelContacts));
                 for(String contact: levelContacts){
-                    set.add(addresses.get(contact));
+                    if(addresses.containsKey(contact))
+                        set.add(addresses.get(contact));
                 }
                 logger.log(Level.INFO, "Adding contacts for level: "+ root.getAttributes().get("name")+ " -> " + set.toString());
                 root.getAttributes().addOrChange("contacts", new ValueSet(set, TypePrimitive.CONTACT));
