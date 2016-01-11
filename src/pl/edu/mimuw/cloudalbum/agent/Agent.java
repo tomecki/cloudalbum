@@ -44,7 +44,7 @@ public class Agent {
             logger.log(Level.INFO, "Registry found: "+ registry.toString());
             Fetcher fetcher = (Fetcher) registry.lookup("FetcherModule");
             logger.log(Level.INFO, "Stub looked up");
-            ex.submit(new FetcherUpdater(fetcher, zmi));
+            ex.execute(new FetcherUpdater(fetcher, zmi));
             logger.log(Level.INFO, "FetcherUpdater thread submitted");
 
             // ================================= Query Signer
@@ -53,7 +53,7 @@ public class Agent {
             logger.log(Level.INFO, "QS Registry found: "+ qsRegistry.toString());
             QuerySigner querySigner = (QuerySigner) qsRegistry.lookup("QuerySignerModule");
             logger.log(Level.INFO, "QS Stub looked up");
-            ex.submit(new AgentUpdater(querySigner));
+            ex.execute(new AgentUpdater(querySigner));
             logger.log(Level.INFO, "AgentUpdater thread submitted");
 
 
