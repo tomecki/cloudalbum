@@ -49,7 +49,7 @@ public class Agent {
 
             // ================================= Query Signer
             logger.log(Level.INFO, "QS Binding to registry");
-            Registry qsRegistry = LocateRegistry.getRegistry(configuration.get("querySigner"), Integer.parseInt(args[0]));
+            Registry qsRegistry = LocateRegistry.getRegistry(((ValueContact)(zmi.getAttributes().get("querySigner"))).getAddress().getHostName(), Integer.parseInt(args[0]));
             logger.log(Level.INFO, "QS Registry found: "+ qsRegistry.toString());
             QuerySigner querySigner = (QuerySigner) qsRegistry.lookup("QuerySignerModule");
             logger.log(Level.INFO, "QS Stub looked up");
