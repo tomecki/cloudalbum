@@ -24,6 +24,7 @@ def main():
             f.write("contacts:0>"+",".join(filter(lambda x: x!= c, computers))+"#1>"+randomContacts(room, rooms)+"\n")
             f.write("path:/uw/mimuw/"+room+"/"+c+"\n")
             f.write("querySigner:"+querySignerHost+"\n")
+            f.write("agentDelay:5000\n")
             f.close()
     f = open("selectedHosts", "wb")
     for (room, cs) in rooms:
