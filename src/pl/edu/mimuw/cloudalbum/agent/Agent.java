@@ -48,13 +48,13 @@ public class Agent {
             logger.log(Level.INFO, "FetcherUpdater thread submitted");
 
             // ================================= Query Signer
-            logger.log(Level.INFO, "Binding to registry");
+            logger.log(Level.INFO, "QS Binding to registry");
             Registry qsRegistry = LocateRegistry.getRegistry(configuration.get("querySigner"), Integer.parseInt(args[0]));
-            logger.log(Level.INFO, "Registry found: "+ registry.toString());
-            QuerySigner querySigner = (QuerySigner) registry.lookup("QuerySignerModule");
-            logger.log(Level.INFO, "Stub looked up");
+            logger.log(Level.INFO, "QS Registry found: "+ qsRegistry.toString());
+            QuerySigner querySigner = (QuerySigner) qsRegistry.lookup("QuerySignerModule");
+            logger.log(Level.INFO, "QS Stub looked up");
             ex.submit(new AgentUpdater(querySigner));
-            logger.log(Level.INFO, "FetcherUpdater thread submitted");
+            logger.log(Level.INFO, "AgentUpdater thread submitted");
 
 
         } catch (Exception e) {
