@@ -37,4 +37,4 @@ sleep 2
 tmux send-keys -t c:0.1 './Agent.sh conf/`hostname`' C-m
 tmux send-keys -t c:0.2 'ls' C-m
 echo "tmux session routine on "`hostname`"finished"
-
+quit
