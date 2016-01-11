@@ -1,5 +1,6 @@
 package pl.edu.mimuw.cloudalbum.agent;
 
+import org.junit.Assert;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 import pl.edu.mimuw.cloudatlas.model.AttributesMap;
@@ -22,11 +23,19 @@ public class AgentUpdater implements Runnable {
     public void run() {
         for(;;){
             try {
+                Assert.assertTrue(Agent.zmi != null);
+                logger.log(Level.INFO, "Attributes map: "+ Agent.zmi.getAttributes());
                 SignedEvent<AttributesMap> am = querySigner.signEvent(Agent.zmi.getAttributes());
                 logger.log(Level.INFO, "Signed attributes map: " + am.toString());
-                Thread.sleep(Long.parseLong(Agent.configuration.get("agentDelay")));
+
             } catch (Exception  e) {
                 e.printStackTrace();
+            }
+            try {
+                Thread.sleep(Long.parseLong(Agent.configuration.get("agentDelay")));
+            } catch (InterruptedException e) {
+                logger.log(Level.WARNING, "error in sleeping: "+ Agent.configuration.containsKey("agentDelay"));
+
             }
         }
     }
