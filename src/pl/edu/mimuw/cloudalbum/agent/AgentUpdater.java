@@ -21,7 +21,7 @@ public class AgentUpdater implements Runnable {
 
     @Override
     public void run() {
-        for(;;){
+//        for(;;){
             try {
                 Assert.assertTrue(Agent.zmi != null);
                 logger.log(Level.INFO, "Attributes map: "+ Agent.zmi.getAttributes());
@@ -37,6 +37,6 @@ public class AgentUpdater implements Runnable {
                 logger.log(Level.WARNING, "error in sleeping: "+ Agent.configuration.containsKey("agentDelay"));
 
             }
-        }
+//        }
     }
 }

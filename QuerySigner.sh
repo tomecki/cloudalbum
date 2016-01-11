@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -v
 cd sr/cloudalbum
+./Registry.sh
 tmux ls | grep q:
 if [ $? -eq 0 ]
 then
