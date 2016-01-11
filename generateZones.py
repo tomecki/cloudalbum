@@ -21,7 +21,7 @@ def main():
 
 
     for (room, computers) in rooms:
-        for c in computers:
+        for c in computers[:3]:
             f = open("conf/"+c, "wb")
             f.write("contacts:0>"+",".join(filter(lambda x: x!= c, computers))+"#1>"+randomContacts(room, rooms)+"\n")
             f.write("path:/uw/mimuw/"+room+"/"+c+"\n")
