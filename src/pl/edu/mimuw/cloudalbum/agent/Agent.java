@@ -36,7 +36,7 @@ public class Agent {
         zmi = createZMIHierarchy(configuration.get("path"));
         fillContacts(zmi, configuration);
         logger.log(Level.INFO, "Configuration finished: "+ zmi.toString()+ ": "+ zmi.getAttributes().toString());
-        ExecutorService ex = Executors.newFixedThreadPool(1);
+        ExecutorService ex = Executors.newFixedThreadPool(4);
         try {
             // ================================ Local fetcher instance
             logger.log(Level.INFO, "Binding to registry");
