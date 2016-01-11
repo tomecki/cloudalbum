@@ -3,7 +3,7 @@
 
 
 
-ps -efj | tr -s " " | grep td366732 | grep rmiregistry | grep 1097 | cut -d' ' -f 2
+ps -efj | tr -s " " | grep td366732 | grep rmiregistry | grep 1097
 if [ $? -eq 1 ]
 then
     echo "running registry on "`hostname`
