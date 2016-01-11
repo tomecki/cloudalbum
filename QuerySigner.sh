@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -v
 cd sr/cloudalbum
 tmux ls | grep q:
 if [ $? -eq 0 ]
