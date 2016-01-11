@@ -16,14 +16,16 @@ public class AgentUpdater implements Runnable {
     private final QuerySigner querySigner;
 
     public AgentUpdater(QuerySigner querySigner) {
+        logger.log(Level.INFO, "Creating AgentUpdater with querySigner: "+ querySigner.toString());
         this.querySigner = querySigner;
     }
 
     @Override
     public void run() {
 //        for(;;){
+        logger.log(Level.INFO, "Attributes map: "+ Agent.zmi.getAttributes());
             try {
-                Assert.assertTrue(Agent.zmi != null);
+
                 logger.log(Level.INFO, "Attributes map: "+ Agent.zmi.getAttributes());
                 SignedEvent<AttributesMap> am = querySigner.signEvent(Agent.zmi.getAttributes());
                 logger.log(Level.INFO, "Signed attributes map: " + am.toString());
