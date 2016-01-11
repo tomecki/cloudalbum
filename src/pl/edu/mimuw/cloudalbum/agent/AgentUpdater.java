@@ -23,7 +23,7 @@ public class AgentUpdater implements Runnable {
         for(;;){
             try {
                 SignedEvent<AttributesMap> am = querySigner.signEvent(Agent.zmi.getAttributes());
-                logger.log(Level.INFO, am.toString());
+                logger.log(Level.INFO, "Signed attributes map: " + am.toString());
                 Thread.sleep(Long.parseLong(Agent.configuration.get("agentDelay")));
             } catch (Exception  e) {
                 e.printStackTrace();
