@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -v
-./Registry,sh
+./Registry.sh
 echo "running node from"`pwd`" on "`hostname`
 
 
