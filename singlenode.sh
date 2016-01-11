@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -v
-./Registry.sh
 echo "running node from"`pwd`" on "`hostname`
 
 
@@ -22,6 +21,7 @@ echo "starting tmux session on "`hostname`
 tmux new -s c -d
 tmux split-window -h -t c:0.0
 tmux split-window -h -t c:0.1
+tmux send-keys -t c:0.0 './Registry.sh' C-m
 tmux send-keys -t c:0.0 './FetcherServer.sh' C-m
 sleep 2
 tmux send-keys -t c:0.1 './Agent.sh conf/`hostname`' C-m

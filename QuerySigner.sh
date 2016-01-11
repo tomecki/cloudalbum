@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -v
 cd sr/cloudalbum
-./Registry.sh
 tmux ls | grep q:
 if [ $? -eq 0 ]
 then
@@ -11,6 +10,7 @@ then
 fi
 tmux new -s q -d
 tmux send-keys -t q 'source Env.sh' C-m
+tmux send-keys -t q './Registry.sh' C-m
 tmux send-keys -t q 'CLOUDALBUMPATH="$BASEDIR/out/production/cloudalbum/:$BASEDIR/lib/objenesis-2.1.jar:$BASEDIR/lib/kryo-shaded-3.0.0.jar:$BASEDIR/lib/minlog-1.3.0.jar:$BASEDIR/lib/cup.jar:$BASEDIR/lib/JLex.jar"' C-m
 tmux send-keys -t q '$JAVA_ENV -classpath $CLOUDALBUMPATH \
     $CLOUDALBUM_JAVA_OPTS \
