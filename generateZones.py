@@ -6,8 +6,10 @@ def randomContacts(roomExclude, dr):
     r = []
     for (room, cs) in dr:
         if room!=roomExclude:
-            r += [random.choice(cs)]
+            r += cs[:3]
     return ",".join(r)
+
+
 def main():
     content = sys.stdin.readlines()
     content = sorted(map(lambda x: x.split(), content))
@@ -20,16 +22,16 @@ def main():
     querySignerRoom = rooms[0][0]
 
 
-    for (room, computers) in rooms:
+    for (room, computers) in rooms[:2]:
         for c in computers[:3]:
             f = open("conf/"+c, "wb")
-            f.write("contacts:0>"+",".join(filter(lambda x: x!= c, computers))+"#1>"+randomContacts(room, rooms)+"\n")
+            f.write("contacts:0>"+",".join(filter(lambda x: x!= c, computers[:3]))+"#1>"+randomContacts(room, rooms[:2])+"\n")
             f.write("path:/uw/mimuw/"+room+"/"+c+"\n")
             f.write("querySigner:"+'/uw/mimuw/'+querySignerRoom+'/'+querySignerHost+','+querySignerHost+"\n")
             f.write("agentDelay:5000\n")
             f.close()
     f = open("selectedHosts", "wb")
-    for (room, cs) in rooms:
+    for (room, cs) in rooms[:2]:
         for c in cs[:3]:
             f.write("/uw/mimuw/"+room+"/"+c+","+content[c]+"\n")
     f.close()
