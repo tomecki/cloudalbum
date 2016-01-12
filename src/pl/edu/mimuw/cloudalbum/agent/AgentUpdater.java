@@ -4,6 +4,7 @@ import org.junit.Assert;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 import pl.edu.mimuw.cloudatlas.model.AttributesMap;
+import pl.edu.mimuw.cloudatlas.model.ZMI;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,11 +26,9 @@ public class AgentUpdater implements Runnable {
 //        for(;;){
         logger.log(Level.INFO, "Attributes map: "+ Agent.zmi.getAttributes());
             try {
-
-                logger.log(Level.INFO, "Attributes map: "+ Agent.zmi.getAttributes());
-                SignedEvent<AttributesMap> am = querySigner.signEvent(Agent.zmi.getAttributes());
+                logger.log(Level.INFO, "Attributes map: "+ Agent.zmi);
+                SignedEvent<ZMI> am = querySigner.signEvent(Agent.zmi);
                 logger.log(Level.INFO, "Signed attributes map: " + am.toString());
-
             } catch (Exception  e) {
                 e.printStackTrace();
             }

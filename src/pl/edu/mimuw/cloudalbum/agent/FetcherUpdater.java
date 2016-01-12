@@ -1,11 +1,7 @@
 package pl.edu.mimuw.cloudalbum.agent;
 
-import pl.edu.mimuw.cloudalbum.fetcher.FetcherModule;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
-import pl.edu.mimuw.cloudatlas.model.Attribute;
-import pl.edu.mimuw.cloudatlas.model.AttributesMap;
-import pl.edu.mimuw.cloudatlas.model.Value;
-import pl.edu.mimuw.cloudatlas.model.ZMI;
+import pl.edu.mimuw.cloudatlas.model.*;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -44,6 +40,11 @@ public class FetcherUpdater implements Runnable {
                 currentState = FetcherUpdater.getLocalStats(fetcher);
                 logger.log(Level.INFO, "Local stats fetched, updating");
                 Agent.zmi.getAttributes().addOrChange(currentState);
+                Iterator<Map.Entry<Attribute, Value>> it = currentState.iterator();
+                while(it.hasNext()){
+                    Map.Entry<Attribute, Value> v = it.next();
+                    Agent.zmi.getFreshness().addOrChange(v.getKey(), new ValueDuration(Agent.calendar.getTimeInMillis()));
+                }
             }
             logger.log(Level.INFO, "Fetching local stats finished");
             try {

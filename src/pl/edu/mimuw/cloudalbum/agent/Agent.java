@@ -2,7 +2,9 @@ package pl.edu.mimuw.cloudalbum.agent;
 
 
 import pl.edu.mimuw.cloudalbum.eda.Dispatcher;
+import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
+import pl.edu.mimuw.cloudalbum.interfaces.GossipingAgent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 import pl.edu.mimuw.cloudatlas.interpreter.Main;
 import pl.edu.mimuw.cloudatlas.model.*;
@@ -26,14 +28,15 @@ import java.util.logging.Logger;
 /**
  * Created by tomek on 20.12.15.
  */
-public class Agent {
+public class Agent implements GossipingAgent {
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
     private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
     public static ZMI zmi;
     public static Map<String, String> configuration = new HashMap<>();
+    public static final Calendar calendar = Calendar.getInstance();
     public static void main(String args[]){
         readConfiguration(args.length==0?"settings.conf" : args[1]);
-        zmi = createZMIHierarchy(configuration.get("path"));
+        zmi = createZMIHierarchy(configuration.get("allNodes"), configuration.get("path"));
         fillContacts(zmi, configuration);
         logger.log(Level.INFO, "Configuration finished: "+ zmi.toString()+ ": "+ zmi.getAttributes().toString());
         ExecutorService ex = Executors.newFixedThreadPool(4);
@@ -87,16 +90,43 @@ public class Agent {
         }
     }
 
-    public static ZMI createZMIHierarchy(String arg) {
-        String[] path = arg.split("/");
+    public static ZMI createZMIHierarchy(String arg, String path) {
+
+        String[] nodes = arg.split(",");
         ZMI root = new ZMI();
-        root.getAttributes().add("name", new ValueString(path[1]));
-        for(int i = 2; i<path.length; ++i){
-            ZMI next = new ZMI();
-            next.getAttributes().add("name", new ValueString(path[i]));
-            root.addSon(next);
-            next.setFather(root);
-            root = next;
+        root.setPathName(PathName.ROOT);
+        for(String node: nodes){
+            ZMI iterator = root;
+            PathName name = new PathName(node);
+            Iterator<String> nit = name.getComponents().iterator();
+            String constructPath = "";
+            while(nit.hasNext()){
+                String nextComponent = nit.next();
+                constructPath = constructPath + "/" + nextComponent;
+                for(ZMI son: iterator.getSons()){
+                    if(nextComponent.equals(son.getPathName().getSingletonName())){
+                        iterator = son; break;
+                    }
+                }
+                if(iterator == root || !nextComponent.equals(iterator.getPathName().getSingletonName())){
+                    ZMI next = new ZMI(iterator);
+                    iterator.addSon(next);
+                    next.setPathName(new PathName(constructPath));
+                    iterator = next;
+                }
+
+            }
+
+        }
+        PathName myName = new PathName(path);
+        Iterator<String> nit = myName.getComponents().iterator();
+        while(nit.hasNext()){
+            String nextComponent = nit.next();
+            for(ZMI son: root.getSons()){
+                if(nextComponent.equals(son.getPathName().getSingletonName())){
+                    root = son; break;
+                }
+            }
         }
         return root;
     }
@@ -136,4 +166,38 @@ public class Agent {
         return r;
     }
 
+    @Override
+    public SignedEvent<ZMI> gossip(SignedEvent<ZMI> attrMap) throws RemoteException {
+        logger.info("Gossiping invoked!");
+        ZMI request = attrMap.getMessage();
+        String name = ((ValueString)request.getAttributes().get("name")).getValue();
+        logger.info("Gossiping from level: "+ name);
+        ZMI iterator = zmi;
+        while(!name.equals(((ValueString)iterator.getAttributes().get("name")).getValue())){
+            iterator = iterator.getFather();
+        }
+        ZMI returnVal = iterator;
+        logger.info("Gossiping local level: "+ iterator.toString());
+        while(iterator != null){
+            updatelocalZMI(request, iterator);
+        }
+
+        return new SignedEvent<ZMI>(returnVal);
+    }
+
+    private void updatelocalZMI(ZMI request, ZMI target) {
+        synchronized (this) {
+            Iterator<Map.Entry<Attribute, Value>> iterator = request.getAttributes().iterator();
+            while(iterator.hasNext()){
+                Map.Entry<Attribute, Value> valueEntry = iterator.next();
+                if(target.getAttributes().getOrNull(valueEntry.getKey()) == null
+                        ||
+                        ((ValueBoolean)(target.getFreshness().get(valueEntry.getKey())
+                                .isLowerThan(request.getFreshness().get(valueEntry.getKey())))).getValue()){
+                    target.getAttributes().addOrChange(valueEntry);
+                    target.getFreshness().add(valueEntry.getKey(), request.getFreshness().get(valueEntry.getKey()));
+                }
+            }
+        }
+    }
 }

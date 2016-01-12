@@ -19,9 +19,9 @@ public class QuerySignerTest {
     @Test
     public void SignTest() throws Exception {
         String path = "/a/b/c/d/e/f/g";
-        ZMI root = Agent.createZMIHierarchy(path);
+        ZMI root = Agent.createZMIHierarchy(path, path);
         String path2 = "/a/b/c/d/e/f/h";
-        ZMI root2 = Agent.createZMIHierarchy(path2);
+        ZMI root2 = Agent.createZMIHierarchy(path2, path);
         SignedEvent<AttributesMap> am = new SignedEvent<>(root.getAttributes());
         SignedEvent<AttributesMap> am2 = new SignedEvent<>(root2.getAttributes());
         for(byte b: am.computeHash(am.getMessage())){

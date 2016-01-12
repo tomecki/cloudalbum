@@ -25,6 +25,7 @@
 package pl.edu.mimuw.cloudatlas.model;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,9 +35,22 @@ import java.util.Map.Entry;
  * A zone management information. This object is a single node in a zone hierarchy. It stores zone attributes as well as
  * references to its father and sons in the tree.
  */
-public class ZMI implements Cloneable {
+public class ZMI implements Cloneable, Serializable {
 	private final AttributesMap attributes = new AttributesMap();
-	
+	private PathName pathName;
+
+	public PathName getPathName() {
+		return pathName;
+	}
+
+	public void setPathName(PathName pathName) {
+		this.pathName = pathName;
+	}
+
+	/**
+	 * AttributesMap used for storing last modification date of corresponding attribute from attributes
+	 */
+	private final AttributesMap freshness = new AttributesMap();
 	private final List<ZMI> sons = new ArrayList<ZMI>();
 	private ZMI father;
 	
@@ -119,8 +133,14 @@ public class ZMI implements Cloneable {
 	public AttributesMap getAttributes() {
 		return attributes;
 	}
-	
-	/**
+
+
+    public AttributesMap getFreshness() {
+        return freshness;
+    }
+
+
+    /**
 	 * Prints recursively in a prefix order (starting from this ZMI) a whole tree with all the attributes.
 	 * 
 	 * @param stream a destination stream
@@ -145,6 +165,7 @@ public class ZMI implements Cloneable {
 	public ZMI clone() {
 		ZMI result = new ZMI(father);
 		result.attributes.add(attributes.clone());
+		result.freshness.add(freshness.clone());
 		for(ZMI son : sons) {
 			ZMI sonClone = son.clone();
 			result.sons.add(sonClone);
