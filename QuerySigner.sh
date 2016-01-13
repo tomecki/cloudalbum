@@ -15,7 +15,7 @@ tmux send-keys -t q 'CLOUDALBUMPATH="$BASEDIR/out/production/cloudalbum/:$BASEDI
 tmux send-keys -t q '$JAVA_ENV -classpath $CLOUDALBUMPATH \
     $CLOUDALBUM_JAVA_OPTS \
     $CLOUDALBUM_DEBUG_OPTS \
-    -Djava.rmi.server.hostname=localhost \
+    -Djava.rmi.server.hostname=`hostname` \
     -Djava.rmi.server.codebase=file:$BASEDIR/out/production/cloudalbum/ \
     -Djava.security.policy=FetcherServer.policy \
 	  pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule 1097' C-m
