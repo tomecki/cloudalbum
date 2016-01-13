@@ -46,6 +46,10 @@ public class SignedEvent<E extends Serializable> implements Serializable {
 
     }
 
+    public boolean validate() throws Exception {
+        return validate(this.hash, computeHash(this.getMessage()));
+    }
+
     public boolean validate(E e) throws Exception {
         return validate(this.hash, computeHash(e));
     }

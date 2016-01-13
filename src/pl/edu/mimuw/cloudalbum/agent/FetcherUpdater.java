@@ -36,7 +36,7 @@ public class FetcherUpdater implements Runnable {
 
         for(;;){
             logger.log(Level.INFO, "Fetching local stats");
-            synchronized(this){
+            synchronized(Agent.zmi){
                 currentState = FetcherUpdater.getLocalStats(fetcher);
                 logger.log(Level.INFO, "Local stats fetched, updating");
                 Agent.zmi.getAttributes().addOrChange(currentState);
@@ -45,6 +45,7 @@ public class FetcherUpdater implements Runnable {
                     Map.Entry<Attribute, Value> v = it.next();
                     Agent.zmi.getFreshness().addOrChange(v.getKey(), new ValueDuration(Agent.calendar.getTimeInMillis()));
                 }
+                Agent.lastZMIupdate = Agent.calendar.getTimeInMillis();
             }
             logger.log(Level.INFO, "Fetching local stats finished");
             try {

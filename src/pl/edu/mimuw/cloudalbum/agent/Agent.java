@@ -1,6 +1,10 @@
 package pl.edu.mimuw.cloudalbum.agent;
 
 
+import com.google.common.base.Joiner;
+import pl.edu.mimuw.cloudalbum.contracts.InstallQueryContract;
+import pl.edu.mimuw.cloudalbum.contracts.StatusContract;
+import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
 import pl.edu.mimuw.cloudalbum.eda.Dispatcher;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
@@ -29,11 +33,16 @@ import java.util.logging.Logger;
  * Created by tomek on 20.12.15.
  */
 public class Agent implements GossipingAgent {
+
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
     private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
     public static ZMI zmi;
+    public static long lastZMIupdate = 0;
     public static Map<String, String> configuration = new HashMap<>();
     public static final Calendar calendar = Calendar.getInstance();
+
+    public static QuerySigner querySigner;
+
     public static void main(String args[]){
         readConfiguration(args.length==0?"settings.conf" : args[1]);
         zmi = createZMIHierarchy(configuration.get("allNodes"), configuration.get("path"));
@@ -54,7 +63,7 @@ public class Agent implements GossipingAgent {
             logger.log(Level.INFO, "QS Binding to registry");
             Registry qsRegistry = LocateRegistry.getRegistry(((ValueContact)(zmi.getAttributes().get("querySigner"))).getAddress().getHostName(), Integer.parseInt(args[0]));
             logger.log(Level.INFO, "QS Registry found: "+ qsRegistry.toString());
-            QuerySigner querySigner = (QuerySigner) qsRegistry.lookup("QuerySignerModule");
+            querySigner = (QuerySigner) qsRegistry.lookup("QuerySignerModule");
             logger.log(Level.INFO, "QS Stub looked up");
             ex.execute(new AgentUpdater(querySigner));
             logger.log(Level.INFO, "AgentUpdater thread submitted");
@@ -167,25 +176,73 @@ public class Agent implements GossipingAgent {
     }
 
     @Override
-    public SignedEvent<ZMI> gossip(SignedEvent<ZMI> attrMap) throws RemoteException {
+    public SignedEvent<ZMIContract> gossip(SignedEvent<ZMIContract> attrMap) throws RemoteException {
+        try {
+            if(!attrMap.validate())
+                throw new RemoteException("Object validation failed!" + attrMap.getMessage().toString());
+        } catch (Exception e) {
+            throw new RemoteException("Validation exception!" + e.getMessage());
+        }
         logger.info("Gossiping invoked!");
-        ZMI request = attrMap.getMessage();
-        String name = ((ValueString)request.getAttributes().get("name")).getValue();
+        ZMI request = attrMap.getMessage().getZmi();
+        PathName name = request.getPathName();
         logger.info("Gossiping from level: "+ name);
         ZMI iterator = zmi;
-        while(!name.equals(((ValueString)iterator.getAttributes().get("name")).getValue())){
+
+        while(!name.getName().equals(iterator.getPathName().getName())){
             iterator = iterator.getFather();
         }
+
         ZMI returnVal = iterator;
         logger.info("Gossiping local level: "+ iterator.toString());
         while(iterator != null){
             updatelocalZMI(request, iterator);
+            iterator = iterator.getFather();
+            request = request.getFather();
         }
 
-        return new SignedEvent<ZMI>(returnVal);
+        Joiner joiner = Joiner.on("l ").skipNulls();
+        return querySigner.signEvent(new ZMIContract(returnVal, Agent.calendar.getTimeInMillis()));
+    }
+
+    @Override
+    public SignedEvent<StatusContract> installQuery(SignedEvent<InstallQueryContract> query) throws RemoteException {
+        try {
+            if(!query.validate()){
+                throw new RemoteException("Object validation failed!" + query.getMessage().toString());
+            }
+        } catch (Exception e) {
+            throw new RemoteException("Validation exception!" + e.getMessage());
+        }
+
+        /**
+         * install query in all zones upwards from Agent.zmi
+         */
+
+        ZMI iterator = Agent.zmi;
+        while(iterator != null){
+            iterator.getAttributes().add(query.getMessage().getQueryName(), new ValueString(query.getMessage().getQuery()));
+            iterator.getFreshness().add(query.getMessage().getQueryName(), new ValueDuration(Agent.calendar.getTimeInMillis()));
+            iterator = iterator.getFather();
+        }
+
+        return querySigner.signEvent(new StatusContract(StatusContract.STATUS.OK));
+    }
+
+    @Override
+    public SignedEvent<ZMIContract> getZMI(SignedEvent<String> zone) throws RemoteException {
+        ZMI iterator = Agent.zmi;
+        PathName name = new PathName(zone.getMessage());
+        while(iterator!=null){
+            if(iterator.getPathName().equals(name)){
+                return querySigner.signEvent(new ZMIContract(iterator, Agent.lastZMIupdate));
+            }
+        }
+        throw new RemoteException("Could not find ZMI with path "+ name.getName() + " from Agent ZMI: "+ Agent.zmi.getPathName().getName());
     }
 
     private void updatelocalZMI(ZMI request, ZMI target) {
+        assert(request.getPathName().equals(target.getPathName()));
         synchronized (this) {
             Iterator<Map.Entry<Attribute, Value>> iterator = request.getAttributes().iterator();
             while(iterator.hasNext()){
@@ -195,7 +252,7 @@ public class Agent implements GossipingAgent {
                         ((ValueBoolean)(target.getFreshness().get(valueEntry.getKey())
                                 .isLowerThan(request.getFreshness().get(valueEntry.getKey())))).getValue()){
                     target.getAttributes().addOrChange(valueEntry);
-                    target.getFreshness().add(valueEntry.getKey(), request.getFreshness().get(valueEntry.getKey()));
+                    target.getFreshness().addOrChange(valueEntry.getKey(), request.getFreshness().get(valueEntry.getKey()));
                 }
             }
         }
