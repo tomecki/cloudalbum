@@ -9,12 +9,12 @@ import java.io.Serializable;
  */
 public class ZMIContract implements Serializable {
     private ZMI zmi;
-    private long timeInMilis;
+    private Long timeInMilis;
 
     public ZMIContract() {
     }
 
-    public ZMIContract(ZMI zmi, long timeInMilis) {
+    public ZMIContract(ZMI zmi, Long timeInMilis) {
         this.zmi = zmi;
         this.timeInMilis = timeInMilis;
     }
@@ -31,7 +31,15 @@ public class ZMIContract implements Serializable {
         return timeInMilis;
     }
 
-    public void setTimeInMilis(long timeInMilis) {
+    public void setTimeInMilis(Long timeInMilis) {
         this.timeInMilis = timeInMilis;
+    }
+
+    @Override
+    public String toString() {
+        return "ZMIContract{" +
+                "zmi=" + zmi +
+                ", timeInMilis=" + timeInMilis +
+                '}';
     }
 }

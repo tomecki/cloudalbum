@@ -186,9 +186,9 @@ public class Agent implements GossipingAgent {
     public SignedEvent<ZMIContract> gossip(SignedEvent<ZMIContract> attrMap) throws RemoteException {
         try {
             if(!attrMap.validate())
-                throw new RemoteException("Object validation failed!" + attrMap.getMessage().toString());
+                throw new RemoteException("Object validation failed! " + attrMap.getMessage().toString());
         } catch (Exception e) {
-            throw new RemoteException("Validation exception!" + e.getMessage());
+            throw new RemoteException("Validation exception! " + e.getMessage());
         }
         logger.info("Gossiping invoked!");
         ZMI request = attrMap.getMessage().getZmi();
