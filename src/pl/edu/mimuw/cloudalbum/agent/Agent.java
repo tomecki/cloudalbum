@@ -94,7 +94,7 @@ public class Agent implements GossipingAgent {
                     if(addresses.containsKey(contact))
                         set.add(addresses.get(contact));
                 }
-                logger.log(Level.INFO, "Adding contacts for level: "+ root.getAttributes().get("name")+ " -> " + set.toString());
+                logger.log(Level.INFO, "Adding contacts for level: "+ root.getPathName()+ " -> " + set.toString());
                 root.getAttributes().addOrChange("contacts", new ValueSet(set, TypePrimitive.CONTACT));
                 root = root.getFather();
             }
