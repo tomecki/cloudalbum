@@ -54,16 +54,16 @@ public class AgentUpdater implements Runnable {
                 ZMI gossipLevel = Agent.zmi.getFather().getNLevelsUp(level);
                 logger.info("Gossip level: "+ gossipLevel.getPathName().getName());
                 logger.info("Gossip level contacts: " + gossipLevel.getAttributes().getOrNull("contacts"));
-                
+
                 try{
 
                     ValueSet contacts = (ValueSet) gossipLevel.getAttributes().get("contacts");
-                    ValueContact[] vc = (ValueContact[]) contacts.toArray();
+                    Object vc[] = contacts.getValue().toArray();
 
                     /**
                      * Random agent selected from contacts list
                      */
-                    ValueContact selected = vc[new Random().nextInt(vc.length)];
+                    ValueContact selected = (ValueContact)vc[new Random().nextInt(vc.length)];
                     Registry r = LocateRegistry.getRegistry(selected.getName().getSingletonName(), 1097);
                     // TODO: bind other agent
                     agent = (Agent) r.lookup("AgentModule");
