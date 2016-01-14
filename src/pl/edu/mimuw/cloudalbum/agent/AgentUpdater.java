@@ -3,6 +3,7 @@ package pl.edu.mimuw.cloudalbum.agent;
 import org.junit.Assert;
 import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
+import pl.edu.mimuw.cloudalbum.interfaces.GossipingAgent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 import pl.edu.mimuw.cloudatlas.model.AttributesMap;
 import pl.edu.mimuw.cloudatlas.model.ValueContact;
@@ -32,7 +33,7 @@ public class AgentUpdater implements Runnable {
     public void run() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         int levelDepth = Agent.zmi.getZMIDepth();
-        Agent agent = null;
+        GossipingAgent agent = null;
         int level = 1;
         for(;;){
 
@@ -66,7 +67,7 @@ public class AgentUpdater implements Runnable {
                     ValueContact selected = (ValueContact)vc[new Random().nextInt(vc.length)];
                     Registry r = LocateRegistry.getRegistry(selected.getName().getSingletonName(), 1097);
                     // TODO: bind other agent
-                    agent = (Agent) r.lookup("AgentModule");
+                    agent = (GossipingAgent) r.lookup("AgentModule");
                     logger.info("Selected Agent for Gossip: "
                              + selected.getName().getName() + ", " + selected.getName().getSingletonName());
 
@@ -111,9 +112,9 @@ public class AgentUpdater implements Runnable {
     private class GossipCallable implements Callable<SignedEvent<ZMIContract>> {
 
         private final SignedEvent<ZMIContract> zmi;
-        private final Agent agent;
+        private final GossipingAgent agent;
 
-        public GossipCallable(SignedEvent<ZMIContract> zmi, Agent other) {
+        public GossipCallable(SignedEvent<ZMIContract> zmi, GossipingAgent other) {
             this.zmi = zmi;
             this.agent = other;
         }
