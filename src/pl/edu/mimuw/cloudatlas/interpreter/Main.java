@@ -71,7 +71,7 @@ public class Main {
 		return zmi.getFather() == null? PathName.ROOT : getPathName(zmi.getFather()).levelDown(name);
 	}
 	
-	private static void executeQueries(ZMI zmi, String query) throws Exception {
+	public static void executeQueries(ZMI zmi, String query) throws Exception {
 		if(!zmi.getSons().isEmpty()) {
 			for(ZMI son : zmi.getSons())
 				executeQueries(son, query);

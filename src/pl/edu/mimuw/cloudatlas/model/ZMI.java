@@ -153,7 +153,39 @@ public class ZMI implements Cloneable, Serializable {
 		for(ZMI son : sons)
 			son.printAttributes(stream);
 	}
-	
+
+
+	/**
+	 * @return ZMI which is n levels up from current zone or throws an exception
+	 */
+	public ZMI getNLevelsUp(int n) throws RuntimeException {
+		try{
+			ZMI iterator = this;
+			while(n > 0){
+				iterator = iterator.getFather();
+				--n;
+			}
+			return iterator;
+		} catch(NullPointerException e){
+			throw new RuntimeException("Original zone "+this.getPathName().getName()+" doesn't have "+ n + " levels up");
+		}
+	}
+
+    /**
+     * Get depth of ZMI structure (from the root node)
+     * @return calculated depth
+     */
+	public int getZMIDepth() {
+		int i = 0;
+		ZMI iterator = this;
+		while(iterator != null) {
+			++i;
+			iterator = iterator.getFather();
+		}
+		return i-1;
+	}
+
+
 	/**
 	 * Creates an independent copy of a whole hierarchy. A returned ZMI has the same reference as a father (but the
 	 * father does not have a reference to it as a son). For the root zone, the copy is completely independent, since
@@ -183,5 +215,12 @@ public class ZMI implements Cloneable, Serializable {
 	@Override
 	public String toString() {
 		return attributes.toString();
+	}
+
+	public ZMI getRoot() {
+		ZMI iterator = this;
+		while(iterator.getFather() != null)
+			iterator = iterator.getFather();
+		return iterator;
 	}
 }

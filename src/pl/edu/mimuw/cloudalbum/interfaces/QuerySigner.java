@@ -13,7 +13,6 @@ import java.rmi.RemoteException;
  * Created by tomek on 30.12.15.
  */
 
-// TODO: define Query Signer interface
 public interface QuerySigner extends Remote {
     public <E extends Serializable> SignedEvent<E> signEvent(E e) throws RemoteException;
 }

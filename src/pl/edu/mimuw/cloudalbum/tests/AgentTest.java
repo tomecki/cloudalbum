@@ -86,4 +86,14 @@ public class AgentTest {
         SignedEvent<StatusContract> result =  new Agent().installQuery(Agent.querySigner.signEvent(new InstallQueryContract("&q1", "SELECT 1+1 AS one")));
         Assert.assertTrue(result.getMessage().getStatus() == StatusContract.STATUS.OK);
     }
+
+
+    @Test
+    public void levelSelectionStrategies() {
+        String path = "/uw/mimuw/violet/violet01,/uw/mimuw/violet/violet04,/uw/mimuw/violet/violet06,/uw/mimuw/blue/blue10,/uw/mimuw/blue/blue13,/uw/mimuw/blue/blue12";
+        ZMI root = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue10");
+        Assert.assertEquals(4, root.getZMIDepth());
+        ZMI actual = root.getNLevelsUp(4);
+        logger.info(actual.toString());
+    }
 }

@@ -5,7 +5,6 @@ import com.google.common.base.Joiner;
 import pl.edu.mimuw.cloudalbum.contracts.InstallQueryContract;
 import pl.edu.mimuw.cloudalbum.contracts.StatusContract;
 import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
-import pl.edu.mimuw.cloudalbum.eda.Dispatcher;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
 import pl.edu.mimuw.cloudalbum.interfaces.GossipingAgent;
@@ -18,7 +17,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -59,6 +57,12 @@ public class Agent implements GossipingAgent {
             ex.execute(new FetcherUpdater(fetcher, zmi));
             logger.log(Level.INFO, "FetcherUpdater thread submitted");
 
+            // ================================= Agent module binding
+            // TODO
+
+            GossipingAgent agent = new Agent();
+            registry.rebind("AgentModule", agent);
+
             // ================================= Query Signer
             logger.log(Level.INFO, "QS Binding to registry");
             Registry qsRegistry = LocateRegistry.getRegistry(((ValueContact)(zmi.getAttributes().get("querySigner"))).getAddress().getHostName(), Integer.parseInt(args[0]));
@@ -67,6 +71,7 @@ public class Agent implements GossipingAgent {
             logger.log(Level.INFO, "QS Stub looked up");
             ex.execute(new AgentUpdater(querySigner));
             logger.log(Level.INFO, "AgentUpdater thread submitted");
+
 
 
         } catch (Exception e) {

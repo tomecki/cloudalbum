@@ -1,11 +1,18 @@
 package pl.edu.mimuw.cloudalbum.agent;
 
 import org.junit.Assert;
+import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 import pl.edu.mimuw.cloudatlas.model.AttributesMap;
+import pl.edu.mimuw.cloudatlas.model.ValueContact;
+import pl.edu.mimuw.cloudatlas.model.ValueSet;
 import pl.edu.mimuw.cloudatlas.model.ZMI;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.Random;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,12 +30,61 @@ public class AgentUpdater implements Runnable {
 
     @Override
     public void run() {
-//        for(;;){
-        logger.log(Level.INFO, "Attributes map: "+ Agent.zmi.getAttributes());
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        int levelDepth = Agent.zmi.getZMIDepth();
+        Agent agent = null;
+        int level = 1;
+        for(;;){
+
             try {
-                logger.log(Level.INFO, "Attributes map: "+ Agent.zmi);
+
                 SignedEvent<ZMI> am = querySigner.signEvent(Agent.zmi);
                 logger.log(Level.INFO, "Signed attributes map: " + am.toString());
+
+                /**
+                 * Select level for gossiping
+                 */
+                if("roundRobin".equals(Agent.configuration.get("levelSelectionStrategy"))){
+                    // round robin
+                    level = (level+1)%(levelDepth);
+                } else {
+                    // random
+                    level = new Random().nextInt(levelDepth);
+                }
+                ZMI gossipLevel = Agent.zmi.getFather().getNLevelsUp(level);
+                try{
+                    ValueSet contacts = (ValueSet) gossipLevel.getAttributes().get("contacts");
+                    ValueContact[] vc = (ValueContact[]) contacts.toArray();
+
+                    /**
+                     * Random agent selected from contacts list
+                     */
+                    ValueContact selected = vc[new Random().nextInt(vc.length)];
+                    Registry r = LocateRegistry.getRegistry(selected.getName().getSingletonName(), 1097);
+                    // TODO: bind other agent
+                    agent = (Agent) r.lookup("AgentModule");
+
+                } catch (Exception e){
+
+                }
+                SignedEvent<ZMIContract> contract = querySigner.signEvent(new ZMIContract(Agent.zmi, Agent.lastZMIupdate));
+
+                Future<SignedEvent<ZMIContract>> future = executor.submit(new GossipCallable(contract, agent));
+
+                try {
+                    SignedEvent<ZMIContract> result = future.get(3, TimeUnit.SECONDS);
+                    // TODO: merge results with local ZMI
+
+                } catch (TimeoutException e) {
+                    future.cancel(true);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+
+
             } catch (Exception  e) {
                 e.printStackTrace();
             }
@@ -38,6 +94,28 @@ public class AgentUpdater implements Runnable {
                 logger.log(Level.WARNING, "error in sleeping: "+ Agent.configuration.containsKey("agentDelay"));
 
             }
-//        }
+        }
+//        executor.shutdownNow();
     }
+
+
+
+
+    private class GossipCallable implements Callable<SignedEvent<ZMIContract>> {
+
+        private final SignedEvent<ZMIContract> zmi;
+        private final Agent agent;
+
+        public GossipCallable(SignedEvent<ZMIContract> zmi, Agent other) {
+            this.zmi = zmi;
+            this.agent = other;
+        }
+
+        @Override
+        public SignedEvent<ZMIContract> call() throws Exception {
+            return agent.gossip(zmi);
+        }
+    }
+
+
 }
