@@ -58,6 +58,11 @@ public class SignedEvent<E extends Serializable> implements Serializable {
         Cipher verifyCipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
         verifyCipher.init(Cipher.DECRYPT_MODE, QuerySignerModule.getPublicKey());
         byte[] decryptedBytes = verifyCipher.doFinal(signedHash);
+        logger.info("validation: "
+                + Arrays.toString(decryptedBytes)
+                + "\n"
+                + Arrays.toString(originalHash));
+        
         return Arrays.equals(decryptedBytes, originalHash);
     }
 
