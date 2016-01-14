@@ -32,7 +32,7 @@ def main():
     for (room, computers) in rooms[:2]:
         for c in computers[:3]:
             f = open("conf/"+c, "wb")
-            f.write("contacts:0>"+",".join(filter(lambda x: x!= c, computers[:3]))+"#1>"+randomContacts(room, rooms[:2])+"\n")
+            f.write("contacts:0>"+",".join(filter(lambda x: x!= c, computers[:3]))+"#1>"+randomContacts(room, rooms[:2])+"#2>"+randomContacts(room, rooms[:2])+"\n")
             f.write("path:/uw/mimuw/"+room+"/"+c+"\n")
             f.write("allNodes:"+",".join(totalHosts)+"\n")
             f.write("querySigner:"+'/uw/mimuw/'+querySignerRoom+'/'+querySignerHost+','+querySignerHost+"\n")
