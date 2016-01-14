@@ -63,6 +63,8 @@ public class AgentUpdater implements Runnable {
                     Registry r = LocateRegistry.getRegistry(selected.getName().getSingletonName(), 1097);
                     // TODO: bind other agent
                     agent = (Agent) r.lookup("AgentModule");
+                    logger.info("Selected Agent for Gossip: "
+                             + selected.getName().getName() + ", " + selected.getName().getSingletonName());
 
                 } catch (Exception e){
 
@@ -113,6 +115,7 @@ public class AgentUpdater implements Runnable {
 
         @Override
         public SignedEvent<ZMIContract> call() throws Exception {
+            assert(agent != null);
             return agent.gossip(zmi);
         }
     }
