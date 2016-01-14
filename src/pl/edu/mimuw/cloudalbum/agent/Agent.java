@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,8 +61,9 @@ public class Agent implements GossipingAgent {
             // ================================= Agent module binding
             // TODO
 
-            GossipingAgent agent = new Agent();
-            registry.rebind("AgentModule", agent);
+            Agent agent = new Agent();
+            GossipingAgent stub = (GossipingAgent) UnicastRemoteObject.exportObject(agent,  0);
+            registry.rebind("AgentModule", stub);
 
             // ================================= Query Signer
             logger.log(Level.INFO, "QS Binding to registry");
