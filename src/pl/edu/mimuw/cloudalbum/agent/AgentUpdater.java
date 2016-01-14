@@ -67,7 +67,8 @@ public class AgentUpdater implements Runnable {
                              + selected.getName().getName() + ", " + selected.getName().getSingletonName());
 
                 } catch (Exception e){
-
+                    logger.severe("Communication error: " + e.getMessage());
+                    e.printStackTrace();
                 }
                 SignedEvent<ZMIContract> contract = querySigner.signEvent(new ZMIContract(Agent.zmi, Agent.lastZMIupdate));
 
