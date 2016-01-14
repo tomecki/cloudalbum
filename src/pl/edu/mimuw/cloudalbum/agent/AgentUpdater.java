@@ -52,7 +52,11 @@ public class AgentUpdater implements Runnable {
                     level = new Random().nextInt(levelDepth);
                 }
                 ZMI gossipLevel = Agent.zmi.getFather().getNLevelsUp(level);
+                logger.info("Gossip level: "+ gossipLevel.getPathName().getName());
+                logger.info("Gossip level contacts: " + gossipLevel.getAttributes().getOrNull("contacts"));
+                
                 try{
+
                     ValueSet contacts = (ValueSet) gossipLevel.getAttributes().get("contacts");
                     ValueContact[] vc = (ValueContact[]) contacts.toArray();
 
