@@ -39,7 +39,7 @@ public class AgentUpdater implements Runnable {
 
             try {
 
-                SignedEvent<ZMI> am = querySigner.signEvent(Agent.zmi);
+                SignedEvent<ZMI> am = querySigner.signEvent(Agent.zmi.clone());
                 logger.log(Level.INFO, "Signed attributes map: " + am.toString());
 
                 /**
@@ -75,7 +75,7 @@ public class AgentUpdater implements Runnable {
                     logger.severe("Communication error: " + e.getMessage());
                     e.printStackTrace();
                 }
-                SignedEvent<ZMIContract> contract = querySigner.signEvent(new ZMIContract(Agent.zmi, Agent.lastZMIupdate));
+                SignedEvent<ZMIContract> contract = querySigner.signEvent(new ZMIContract(Agent.zmi.clone(), Agent.lastZMIupdate));
 
                 Future<SignedEvent<ZMIContract>> future = executor.submit(new GossipCallable(contract, agent));
 
