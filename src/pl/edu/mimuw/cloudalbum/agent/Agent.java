@@ -187,14 +187,18 @@ public class Agent implements GossipingAgent {
     public SignedEvent<ZMIContract> gossip(SignedEvent<ZMIContract> attrMap) throws RemoteException {
         try {
             if(!attrMap.validate(QuerySignerModule.getPublicKey()))
-                throw new RemoteException("Object validation failed! " + attrMap.getMessage().toString());
+                throw new RemoteException("Object validation failed!");
         } catch (Exception e) {
             try {
                 throw new RemoteException(
                         "Validation exception! "
                                 + e.getMessage()
-                                + "\n With Key: "
-                                + Arrays.toString(QuerySignerModule.getPublicKey().getEncoded()));
+                                + "\nWith Key: "
+                                + Arrays.toString(QuerySignerModule.getPublicKey().getEncoded())
+                                + "\nOriginal object trace: "
+                                + attrMap.getMessageTrace()
+                                + "\nCurrent object: "
+                                + attrMap.getMessage().toString());
             } catch (Exception e1) {
                 e1.printStackTrace();
             }

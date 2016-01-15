@@ -20,6 +20,26 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     private static final java.lang.String DIGEST_ALGORITHM = "SHA-256";
     private static final java.lang.String ENCRYPTION_ALGORITHM = "RSA";
     private static Logger logger = Logger.getLogger(SignedEvent.class.getName());
+    private String messageTrace;
+
+    public String getMessageTrace() {
+        return messageTrace;
+    }
+
+    public void setMessageTrace(String messageTrace) {
+        this.messageTrace = messageTrace;
+    }
+
+    public byte[] getDigest() {
+        return digest;
+    }
+
+    public void setDigest(byte[] digest) {
+        this.digest = digest;
+    }
+
+    private byte[] digest;
+
     public SignedEvent(E e, PrivateKey privateKey) {
         super();
         setMessage(e);
@@ -35,6 +55,8 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     private byte[] hash;
     private void setHash(PrivateKey privateKey) throws Exception {
         this.hash = sign(computeHash(this.message), privateKey);
+        this.digest = computeHash(this.message);
+        this.messageTrace = this.message.toString();
     }
 
     private byte[] sign(byte[] bytes, PrivateKey privateKey) throws Exception {
@@ -90,6 +112,7 @@ public class SignedEvent<E extends Serializable> implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.digest = digest;
         return digest;
 
     }
