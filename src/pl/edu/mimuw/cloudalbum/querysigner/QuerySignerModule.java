@@ -31,7 +31,7 @@ public class QuerySignerModule implements QuerySigner {
 
     public <E extends Serializable> SignedEvent<E> signEvent(E o) throws RemoteException {
         try {
-            logger.log(Level.INFO, "Signing message: " + o.toString() + "\nWith key: " + Arrays.toString(QuerySignerModule.getPrivateKey().getEncoded()));
+            logger.log(Level.INFO, "Signing message: " + o.toString() + "\nWith key: " + Arrays.toString(QuerySignerModule.getPublicKey().getEncoded()));
             return new SignedEvent(o, QuerySignerModule.getPrivateKey());
         } catch(Exception e){
             throw new RemoteException("Error signing the message: " + e.getMessage());
