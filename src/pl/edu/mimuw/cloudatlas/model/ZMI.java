@@ -198,6 +198,7 @@ public class ZMI implements Cloneable, Serializable {
 		ZMI result = new ZMI(father);
 		result.attributes.add(attributes.clone());
 		result.freshness.add(freshness.clone());
+		result.pathName = this.pathName;
 		for(ZMI son : sons) {
 			ZMI sonClone = son.clone();
 			result.sons.add(sonClone);

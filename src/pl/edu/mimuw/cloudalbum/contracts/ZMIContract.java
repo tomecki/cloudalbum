@@ -11,9 +11,6 @@ public class ZMIContract implements Serializable {
     private ZMI zmi;
     private Long timeInMilis;
 
-    public ZMIContract() {
-    }
-
     public ZMIContract(ZMI zmi, Long timeInMilis) {
         this.zmi = zmi;
         this.timeInMilis = timeInMilis;
