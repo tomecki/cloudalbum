@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+
+CLOUDALBUM_DEBUG_OPTS="-Djava.rmi.server.logCalls=true \
+    -Dsun.rmi.client.logCalls=true \
+    -Dsun.rmi.transport.tcp.logLevel=VERBOSE"
 set -v
 cd sr/cloudalbum
 tmux ls | grep q:
