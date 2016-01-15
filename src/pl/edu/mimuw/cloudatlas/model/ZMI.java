@@ -224,4 +224,20 @@ public class ZMI implements Cloneable, Serializable {
 			iterator = iterator.getFather();
 		return iterator;
 	}
+
+	public ZMI getZoneOrNull(PathName path) {
+		ZMI iterator = this;
+		for(String component: path.getComponents()){
+			for(ZMI son: iterator.getSons()){
+				if(son.getPathName().getSingletonName().equals(component)){
+					iterator = son;
+					break;
+				}
+			}
+		}
+		if(!path.equals(iterator.getPathName())){
+			return null;
+		}
+		return iterator;
+	}
 }

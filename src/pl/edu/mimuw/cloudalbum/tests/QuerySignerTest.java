@@ -8,6 +8,7 @@ import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
 import pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule;
 import pl.edu.mimuw.cloudatlas.model.AttributesMap;
+import pl.edu.mimuw.cloudatlas.model.PathName;
 import pl.edu.mimuw.cloudatlas.model.ZMI;
 
 import java.io.IOException;
@@ -24,18 +25,28 @@ public class QuerySignerTest {
     public void SignTest() throws Exception {
         String path = "/a/b/c/d/e/f/g";
         ZMI root = Agent.createZMIHierarchy(path, path);
+
         String path2 = "/a/b/c/d/e/f/h";
-        ZMI root2 = Agent.createZMIHierarchy(path2, path);
-        SignedEvent<AttributesMap> am = new SignedEvent<>(root.getAttributes(), QuerySignerModule.getPrivateKey());
-        SignedEvent<AttributesMap> am2 = new SignedEvent<>(root2.getAttributes(), QuerySignerModule.getPrivateKey());
+        ZMI root2 = Agent.createZMIHierarchy(path2, path2);
+        SignedEvent<ZMI> am = new SignedEvent<>(root, QuerySignerModule.getPrivateKey());
+        SignedEvent<ZMI> am2 = new SignedEvent<>(root2, QuerySignerModule.getPrivateKey());
         for(byte b: am.computeHash(am.getMessage())){
             System.err.print(b);
         } System.err.println();
         for(byte b: am.getHash()){
             System.err.print(b);
         } System.err.println();
-        Assert.assertTrue(am.validate(root.getAttributes(), QuerySignerModule.getPublicKey()));
-        Assert.assertFalse(am.validate(root2.getAttributes(), QuerySignerModule.getPublicKey()));
+
+        ZMI myZone = root.getZoneOrNull(new PathName("/a/b/c"));
+
+        Assert.assertTrue(am.validate(QuerySignerModule.getPublicKey()));
+        Assert.assertTrue(am2.validate(QuerySignerModule.getPublicKey()));
+        am2.setMessage(root);
+        Assert.assertFalse(am2.validate(QuerySignerModule.getPublicKey()));
+
+
+
+
     }
 
     @Test

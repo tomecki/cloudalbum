@@ -37,6 +37,8 @@ public class Agent implements GossipingAgent {
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
     private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
     public static ZMI zmi;
+    public static ZMI getMyZMI() { return zmi.getZoneOrNull(myPath); }
+    private static PathName myPath;
     public static long lastZMIupdate = 0;
     public static Map<String, String> configuration = new HashMap<>();
     public static final Calendar calendar = Calendar.getInstance();
@@ -88,6 +90,7 @@ public class Agent implements GossipingAgent {
             String[] querySigner = configuration.get("querySigner").split(",");
             root.getAttributes().addOrChange("querySigner", new ValueContact(new PathName(querySigner[0]), InetAddress.getByName(querySigner[1])));
             String[] contacts = configuration.get("contacts").split("#");
+            ZMI myZone = root.getZoneOrNull(new PathName(configuration.get("path")));
             root = root.getFather();
             for(String level: contacts){
                 String[] levelContacts = (level.split(">")[1]).split(",");
@@ -135,16 +138,6 @@ public class Agent implements GossipingAgent {
             }
 
         }
-        PathName myName = new PathName(path);
-        Iterator<String> nit = myName.getComponents().iterator();
-        while(nit.hasNext()){
-            String nextComponent = nit.next();
-            for(ZMI son: root.getSons()){
-                if(nextComponent.equals(son.getPathName().getSingletonName())){
-                    root = son; break;
-                }
-            }
-        }
         return root;
     }
 
@@ -165,6 +158,7 @@ public class Agent implements GossipingAgent {
                 logger.log(Level.INFO, "Reading configuration entry: " + line);
                 configuration.put(arr[0], arr[1]);
             }
+            myPath = new PathName(configuration.get("path"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -205,24 +199,28 @@ public class Agent implements GossipingAgent {
         }
         logger.info("Gossiping invoked!");
         ZMI request = attrMap.getMessage().getZmi();
-        PathName name = request.getPathName();
-        logger.info("Gossiping from level: "+ name);
+
         ZMI iterator = zmi;
+        ZMI requestIterator = request;
+        for(String component: myPath.getComponents()){
+            updateLocalZMI(requestIterator, iterator);
+            for(ZMI son: requestIterator.getSons()) {
+                if(son.getPathName().getSingletonName().equals(component)){
+                    requestIterator = son; break;
+                }
+            }
+            for(ZMI son: iterator.getSons()) {
+                if(son.getPathName().getSingletonName().equals(component)){
+                    iterator = son; break;
+                }
+            }
+            if(!requestIterator.equals(component) || !iterator.equals(component))
+                break;
 
-        while(!name.getName().equals(iterator.getPathName().getName())){
-            iterator = iterator.getFather();
         }
 
-        ZMI returnVal = iterator;
-        logger.info("Gossiping local level: "+ iterator.toString());
-        while(iterator != null){
-            updatelocalZMI(request, iterator);
-            iterator = iterator.getFather();
-            request = request.getFather();
-        }
 
-        Joiner joiner = Joiner.on("l ").skipNulls();
-        return querySigner.signEvent(new ZMIContract(returnVal, Agent.calendar.getTimeInMillis()));
+        return querySigner.signEvent(new ZMIContract(zmi.clone(), Agent.calendar.getTimeInMillis()));
     }
 
     @Override
@@ -236,10 +234,10 @@ public class Agent implements GossipingAgent {
         }
 
         /**
-         * install query in all zones upwards from Agent.zmi
+         * install query in all zones upwards from my zone
          */
 
-        ZMI iterator = Agent.zmi;
+        ZMI iterator = Agent.zmi.getZoneOrNull(myPath);
         while(iterator != null){
             iterator.getAttributes().add(query.getMessage().getQueryName(), new ValueString(query.getMessage().getQuery()));
             iterator.getFreshness().add(query.getMessage().getQueryName(), new ValueDuration(Agent.calendar.getTimeInMillis()));
@@ -261,7 +259,7 @@ public class Agent implements GossipingAgent {
         throw new RemoteException("Could not find ZMI with path "+ name.getName() + " from Agent ZMI: "+ Agent.zmi.getPathName().getName());
     }
 
-    private void updatelocalZMI(ZMI request, ZMI target) {
+    private void updateLocalZMI(ZMI request, ZMI target) {
         assert(request.getPathName().equals(target.getPathName()));
         synchronized (this) {
             Iterator<Map.Entry<Attribute, Value>> iterator = request.getAttributes().iterator();
