@@ -8,9 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,11 +20,11 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     private static final java.lang.String DIGEST_ALGORITHM = "SHA-256";
     private static final java.lang.String ENCRYPTION_ALGORITHM = "RSA";
     private static Logger logger = Logger.getLogger(SignedEvent.class.getName());
-    public SignedEvent(E e) {
+    public SignedEvent(E e, PrivateKey privateKey) {
         super();
         setMessage(e);
         try {
-            setHash();
+            setHash(privateKey);
         } catch (Exception e1) {
             logger.log (Level.SEVERE, e1.getMessage());
         }
@@ -35,29 +33,29 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     private E message;
 
     private byte[] hash;
-    private void setHash() throws Exception {
-        this.hash = sign(computeHash(this.message));
+    private void setHash(PrivateKey privateKey) throws Exception {
+        this.hash = sign(computeHash(this.message), privateKey);
     }
 
-    private byte[] sign(byte[] bytes) throws Exception {
+    private byte[] sign(byte[] bytes, PrivateKey privateKey) throws Exception {
         Cipher signCipher = signCipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-        signCipher.init(Cipher.ENCRYPT_MODE, QuerySignerModule.getPrivateKey());
+        signCipher.init(Cipher.ENCRYPT_MODE, privateKey);
         return signCipher.doFinal(bytes);
 
     }
 
-    public boolean validate() throws Exception {
+    public boolean validate(PublicKey publicKey) throws Exception {
         logger.info("Validating against " + this.getMessage().toString() + "\nWith key: "+ QuerySignerModule.getPublicKey());
-        return validate(this.hash, computeHash(this.getMessage()));
+        return validate(this.hash, computeHash(this.getMessage()), publicKey);
     }
 
-    public boolean validate(E e) throws Exception {
-        return validate(this.hash, computeHash(e));
+    public boolean validate(E e, PublicKey publicKey) throws Exception {
+        return validate(this.hash, computeHash(e), publicKey);
     }
 
-    private boolean validate(byte[] signedHash, byte[] originalHash) throws Exception {
+    private boolean validate(byte[] signedHash, byte[] originalHash, PublicKey publicKey) throws Exception {
         Cipher verifyCipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-        verifyCipher.init(Cipher.DECRYPT_MODE, QuerySignerModule.getPublicKey());
+        verifyCipher.init(Cipher.DECRYPT_MODE, publicKey);
         byte[] decryptedBytes = verifyCipher.doFinal(signedHash);
         logger.info("validation: "
                 + Arrays.toString(decryptedBytes)

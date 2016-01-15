@@ -29,8 +29,12 @@ public class QuerySignerModule implements QuerySigner {
     private static Logger logger = Logger.getLogger(QuerySignerModule.class.getName());
 
     public <E extends Serializable> SignedEvent<E> signEvent(E o) throws RemoteException {
-        logger.log(Level.INFO, "Signing message: " + o.toString() + "\nWith key: "+ publicKey);
-        return new SignedEvent(o);
+        try {
+            logger.log(Level.INFO, "Signing message: " + o.toString() + "\nWith key: " + getPrivateKey());
+            return new SignedEvent(o, getPrivateKey());
+        } catch(Exception e){
+            throw new RemoteException("Error signing the message: " + e.getMessage());
+        }
     }
     private static PublicKey publicKey;
     private static PrivateKey privateKey;

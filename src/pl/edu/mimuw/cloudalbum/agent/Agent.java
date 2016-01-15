@@ -9,6 +9,7 @@ import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.interfaces.Fetcher;
 import pl.edu.mimuw.cloudalbum.interfaces.GossipingAgent;
 import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
+import pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule;
 import pl.edu.mimuw.cloudatlas.interpreter.Main;
 import pl.edu.mimuw.cloudatlas.model.*;
 
@@ -185,7 +186,7 @@ public class Agent implements GossipingAgent {
     @Override
     public SignedEvent<ZMIContract> gossip(SignedEvent<ZMIContract> attrMap) throws RemoteException {
         try {
-            if(!attrMap.validate())
+            if(!attrMap.validate(QuerySignerModule.getPublicKey()))
                 throw new RemoteException("Object validation failed! " + attrMap.getMessage().toString());
         } catch (Exception e) {
             throw new RemoteException("Validation exception! " + e.getMessage());
@@ -215,7 +216,7 @@ public class Agent implements GossipingAgent {
     @Override
     public SignedEvent<StatusContract> installQuery(SignedEvent<InstallQueryContract> query) throws RemoteException {
         try {
-            if(!query.validate()){
+            if(!query.validate(QuerySignerModule.getPublicKey())){
                 throw new RemoteException("Object validation failed!" + query.getMessage().toString());
             }
         } catch (Exception e) {

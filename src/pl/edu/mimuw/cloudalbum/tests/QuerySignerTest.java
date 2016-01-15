@@ -5,6 +5,8 @@ import org.junit.Test;
 import pl.edu.mimuw.cloudalbum.agent.Agent;
 import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
+import pl.edu.mimuw.cloudalbum.interfaces.QuerySigner;
+import pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule;
 import pl.edu.mimuw.cloudatlas.model.AttributesMap;
 import pl.edu.mimuw.cloudatlas.model.ZMI;
 
@@ -24,16 +26,16 @@ public class QuerySignerTest {
         ZMI root = Agent.createZMIHierarchy(path, path);
         String path2 = "/a/b/c/d/e/f/h";
         ZMI root2 = Agent.createZMIHierarchy(path2, path);
-        SignedEvent<AttributesMap> am = new SignedEvent<>(root.getAttributes());
-        SignedEvent<AttributesMap> am2 = new SignedEvent<>(root2.getAttributes());
+        SignedEvent<AttributesMap> am = new SignedEvent<>(root.getAttributes(), QuerySignerModule.getPrivateKey());
+        SignedEvent<AttributesMap> am2 = new SignedEvent<>(root2.getAttributes(), QuerySignerModule.getPrivateKey());
         for(byte b: am.computeHash(am.getMessage())){
             System.err.print(b);
         } System.err.println();
         for(byte b: am.getHash()){
             System.err.print(b);
         } System.err.println();
-        Assert.assertTrue(am.validate(root.getAttributes()));
-        Assert.assertFalse(am.validate(root2.getAttributes()));
+        Assert.assertTrue(am.validate(root.getAttributes(), QuerySignerModule.getPublicKey()));
+        Assert.assertFalse(am.validate(root2.getAttributes(), QuerySignerModule.getPublicKey()));
     }
 
     @Test
@@ -45,8 +47,8 @@ public class QuerySignerTest {
         ZMIContract z = new ZMIContract(root, Calendar.getInstance().getTimeInMillis());
         Thread.sleep(1000);
         ZMIContract z2 = new ZMIContract(root2, Calendar.getInstance().getTimeInMillis());
-        SignedEvent<ZMIContract> zc = new SignedEvent<>(z);
-        Assert.assertTrue(zc.validate(z2));
+        SignedEvent<ZMIContract> zc = new SignedEvent<>(z, QuerySignerModule.getPrivateKey());
+        Assert.assertTrue(zc.validate(z2, QuerySignerModule.getPublicKey()));
 
     }
 }
