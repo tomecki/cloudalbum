@@ -47,6 +47,7 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     }
 
     public boolean validate() throws Exception {
+        logger.info("Validating against " + this.getMessage().toString());
         return validate(this.hash, computeHash(this.getMessage()));
     }
 
@@ -62,7 +63,7 @@ public class SignedEvent<E extends Serializable> implements Serializable {
                 + Arrays.toString(decryptedBytes)
                 + "\n"
                 + Arrays.toString(originalHash));
-        
+
         return Arrays.equals(decryptedBytes, originalHash);
     }
 
