@@ -47,7 +47,7 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     }
 
     public boolean validate() throws Exception {
-        logger.info("Validating against " + this.getMessage().toString());
+        logger.info("Validating against " + this.getMessage().toString() + "\nWith key: "+ QuerySignerModule.getPublicKey());
         return validate(this.hash, computeHash(this.getMessage()));
     }
 
