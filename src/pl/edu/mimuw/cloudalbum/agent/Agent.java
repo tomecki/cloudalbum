@@ -189,7 +189,15 @@ public class Agent implements GossipingAgent {
             if(!attrMap.validate(QuerySignerModule.getPublicKey()))
                 throw new RemoteException("Object validation failed! " + attrMap.getMessage().toString());
         } catch (Exception e) {
-            throw new RemoteException("Validation exception! " + e.getMessage());
+            try {
+                throw new RemoteException(
+                        "Validation exception! "
+                                + e.getMessage()
+                                + "\n With Key: "
+                                + Arrays.toString(QuerySignerModule.getPublicKey().getEncoded()));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
         logger.info("Gossiping invoked!");
         ZMI request = attrMap.getMessage().getZmi();
