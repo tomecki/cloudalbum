@@ -17,6 +17,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,8 +31,8 @@ public class QuerySignerModule implements QuerySigner {
 
     public <E extends Serializable> SignedEvent<E> signEvent(E o) throws RemoteException {
         try {
-            logger.log(Level.INFO, "Signing message: " + o.toString() + "\nWith key: " + getPrivateKey());
-            return new SignedEvent(o, getPrivateKey());
+            logger.log(Level.INFO, "Signing message: " + o.toString() + "\nWith key: " + Arrays.toString(QuerySignerModule.getPrivateKey().getEncoded()));
+            return new SignedEvent(o, QuerySignerModule.getPrivateKey());
         } catch(Exception e){
             throw new RemoteException("Error signing the message: " + e.getMessage());
         }
