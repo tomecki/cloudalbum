@@ -33,17 +33,17 @@ public class FetcherUpdater implements Runnable {
         }
 
         logger.log(Level.INFO, "FetcherUpdater thread started");
-
+        ZMI myZone = Agent.zmi.getZoneOrNull(Agent.getMyPath());
         for(;;){
             logger.log(Level.INFO, "Fetching local stats");
             synchronized(Agent.zmi){
                 currentState = FetcherUpdater.getLocalStats(fetcher);
                 logger.log(Level.INFO, "Local stats fetched, updating");
-                Agent.zmi.getAttributes().addOrChange(currentState);
+                myZone.getAttributes().addOrChange(currentState);
                 Iterator<Map.Entry<Attribute, Value>> it = currentState.iterator();
                 while(it.hasNext()){
                     Map.Entry<Attribute, Value> v = it.next();
-                    Agent.zmi.getFreshness().addOrChange(v.getKey(), new ValueDuration(Agent.calendar.getTimeInMillis()));
+                    myZone.getFreshness().addOrChange(v.getKey(), new ValueDuration(Agent.calendar.getTimeInMillis()));
                 }
                 Agent.lastZMIupdate = Agent.calendar.getTimeInMillis();
             }
@@ -62,14 +62,14 @@ public class FetcherUpdater implements Runnable {
             am = fetcher.getLocalStats();
             logger.log(Level.INFO, "Local stats fetched: "+ am.toString());
 
-            Iterator<Map.Entry<Attribute, Value>> it;
-            it = am.iterator();
-            if(am!=null) {
-                while (it.hasNext()) {
-                    Map.Entry<Attribute, Value> e = it.next();
-                    System.out.println(e.getKey().getName() + " " + e.getValue().toString());
-                }
-            }
+//            Iterator<Map.Entry<Attribute, Value>> it;
+//            it = am.iterator();
+//            if(am!=null) {
+//                while (it.hasNext()) {
+//                    Map.Entry<Attribute, Value> e = it.next();
+////                    System.out.println(e.getKey().getName() + " " + e.getValue().toString());
+//                }
+//            }
             return am;
         } catch (RemoteException e) {
             e.printStackTrace();
