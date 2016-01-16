@@ -38,6 +38,12 @@ public class AgentUpdater implements Runnable {
         for(;;){
             agent = null;
             try {
+                Thread.sleep(Long.parseLong(Agent.configuration.get("agentDelay")));
+            } catch (InterruptedException e) {
+                logger.log(Level.WARNING, "error in sleeping: "+ Agent.configuration.containsKey("agentDelay"));
+
+            }
+            try {
 
                 SignedEvent<ZMI> am = querySigner.signEvent(Agent.zmi.clone());
                 logger.log(Level.INFO, "Signed attributes map: " + am.toString());
@@ -108,12 +114,7 @@ public class AgentUpdater implements Runnable {
             } catch (Exception  e) {
                 e.printStackTrace();
             }
-            try {
-                Thread.sleep(Long.parseLong(Agent.configuration.get("agentDelay")));
-            } catch (InterruptedException e) {
-                logger.log(Level.WARNING, "error in sleeping: "+ Agent.configuration.containsKey("agentDelay"));
 
-            }
         }
 //        executor.shutdownNow();
     }
