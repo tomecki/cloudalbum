@@ -38,7 +38,17 @@ public class Agent implements GossipingAgent {
     private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
     public static ZMI zmi;
     public static ZMI getMyZMI() { return zmi.getZoneOrNull(myPath); }
+
+    public static PathName getMyPath() {
+        return myPath;
+    }
+
+    public static void setMyPath(PathName myPath) {
+        Agent.myPath = myPath;
+    }
+
     private static PathName myPath;
+
     public static long lastZMIupdate = 0;
     public static Map<String, String> configuration = new HashMap<>();
     public static final Calendar calendar = Calendar.getInstance();

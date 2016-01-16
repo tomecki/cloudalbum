@@ -52,7 +52,14 @@ public class AgentUpdater implements Runnable {
                     // random
                     level = new Random().nextInt(levelDepth);
                 }
-                ZMI gossipLevel = Agent.zmi.getFather().getNLevelsUp(level);
+                logger.info("Selecting gossip level: "
+                        + Agent.zmi.getPathName().getName()
+                        + "\n"
+                        + Agent.getMyPath()
+                        + " | "
+                        + Agent.zmi.getZoneOrNull(Agent.getMyPath()).getPathName().getName()
+                        + " | " + Agent.zmi.getZoneOrNull(Agent.getMyPath()).getFather().getPathName().getName());
+                ZMI gossipLevel = Agent.zmi.getZoneOrNull(Agent.getMyPath()).getFather().getNLevelsUp(level);
                 logger.info("Gossip level: "+ gossipLevel.getPathName().getName());
                 logger.info("Gossip level contacts: " + gossipLevel.getAttributes().getOrNull("contacts"));
 
