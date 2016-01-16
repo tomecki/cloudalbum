@@ -32,7 +32,7 @@ public class AgentUpdater implements Runnable {
     @Override
     public void run() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        int levelDepth = Agent.zmi.getZMIDepth();
+        int levelDepth = Agent.zmi.getZMIDepth(Agent.getMyZMI().getPathName());
         GossipingAgent agent = null;
         int level = 1;
         for(;;){

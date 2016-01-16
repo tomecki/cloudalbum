@@ -175,9 +175,9 @@ public class ZMI implements Cloneable, Serializable {
      * Get depth of ZMI structure (from the root node)
      * @return calculated depth
      */
-	public int getZMIDepth() {
+	public int getZMIDepth(PathName name) {
 		int i = 0;
-		ZMI iterator = this;
+		ZMI iterator = this.getZoneOrNull(name);
 		while(iterator != null) {
 			++i;
 			iterator = iterator.getFather();
