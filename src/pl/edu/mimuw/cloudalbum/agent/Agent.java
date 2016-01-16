@@ -101,7 +101,7 @@ public class Agent implements GossipingAgent {
             root.getAttributes().addOrChange("querySigner", new ValueContact(new PathName(querySigner[0]), InetAddress.getByName(querySigner[1])));
             String[] contacts = configuration.get("contacts").split("#");
             ZMI myZone = root.getZoneOrNull(new PathName(configuration.get("path")));
-            root = root.getFather();
+            ZMI iterator =  myZone.getFather();
             for(String level: contacts){
                 String[] levelContacts = (level.split(">")[1]).split(",");
                 Set<Value> set = new HashSet<>();
@@ -110,9 +110,9 @@ public class Agent implements GossipingAgent {
                     if(addresses.containsKey(contact))
                         set.add(addresses.get(contact));
                 }
-                logger.log(Level.INFO, "Adding contacts for level: "+ root.getPathName()+ " -> " + set.toString());
-                root.getAttributes().addOrChange("contacts", new ValueSet(set, TypePrimitive.CONTACT));
-                root = root.getFather();
+                logger.log(Level.INFO, "Adding contacts for level: "+ iterator.getPathName()+ " -> " + set.toString());
+                iterator.getAttributes().addOrChange("contacts", new ValueSet(set, TypePrimitive.CONTACT));
+                iterator = iterator.getFather();
             }
         } catch(Exception e){
             logger.log(Level.SEVERE, "Error creating contacts configuration from file!");
