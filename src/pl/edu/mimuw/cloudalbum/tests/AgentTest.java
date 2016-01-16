@@ -9,6 +9,7 @@ import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
 import pl.edu.mimuw.cloudalbum.eda.SignedEvent;
 import pl.edu.mimuw.cloudalbum.querysigner.QuerySignerModule;
 import pl.edu.mimuw.cloudatlas.interpreter.Main;
+import pl.edu.mimuw.cloudatlas.model.PathName;
 import pl.edu.mimuw.cloudatlas.model.ValueDuration;
 import pl.edu.mimuw.cloudatlas.model.ValueString;
 import pl.edu.mimuw.cloudatlas.model.ZMI;
@@ -92,7 +93,7 @@ public class AgentTest {
     public void levelSelectionStrategies() {
         String path = "/uw/mimuw/violet/violet01,/uw/mimuw/violet/violet04,/uw/mimuw/violet/violet06,/uw/mimuw/blue/blue10,/uw/mimuw/blue/blue13,/uw/mimuw/blue/blue12";
         ZMI root = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue10");
-        Assert.assertEquals(4, root.getZMIDepth());
+        Assert.assertEquals(4, root.getZMIDepth(new PathName("/uw/mimuw/blue/blue10")));
         ZMI actual = root.getNLevelsUp(4);
         logger.info(actual.toString());
     }
