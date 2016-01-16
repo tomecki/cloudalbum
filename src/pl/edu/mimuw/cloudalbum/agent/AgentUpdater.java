@@ -36,7 +36,7 @@ public class AgentUpdater implements Runnable {
         GossipingAgent agent = null;
         int level = 1;
         for(;;){
-
+            agent = null;
             try {
 
                 SignedEvent<ZMI> am = querySigner.signEvent(Agent.zmi.clone());
@@ -81,6 +81,11 @@ public class AgentUpdater implements Runnable {
                 } catch (Exception e){
                     logger.severe("Communication error: " + e.getMessage());
                     e.printStackTrace();
+                }
+
+                if(agent == null){
+                    logger.info("No agent available for gossiping for " + gossipLevel.getPathName().getName());
+                    continue;
                 }
                 SignedEvent<ZMIContract> contract = querySigner.signEvent(new ZMIContract(Agent.zmi.clone(), Agent.lastZMIupdate));
 
