@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-
-CLOUDALBUM_DEBUG_OPTS="-Dsun.rmi.client.logCalls=true"
 set -v
-cd sr/cloudalbum
+CLOUDALBUM_DEBUG_OPTS="-Dsun.rmi.client.logCalls=true"
+#cd sr/cloudalbum
+cd cloudalbum
 tmux ls | grep q:
 if [ $? -eq 0 ]
 then

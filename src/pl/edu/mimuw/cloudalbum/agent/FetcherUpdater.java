@@ -14,12 +14,12 @@ import java.util.logging.Logger;
  */
 public class FetcherUpdater implements Runnable {
     private static Logger logger = Logger.getLogger(FetcherUpdater.class.getName());
-    private ZMI zmi;
     private Fetcher fetcher;
     private AttributesMap currentState;
 
     public FetcherUpdater(Fetcher fetcher, ZMI zmi) {
-        this.fetcher = fetcher; this.zmi = zmi;
+        this.fetcher = fetcher;
+        //this.zmi = zmi;
         logger.log(Level.INFO, "FetcherUpdater initiated with ZMI: "+ zmi.toString());
     }
 
@@ -33,7 +33,7 @@ public class FetcherUpdater implements Runnable {
         }
 
         logger.log(Level.INFO, "FetcherUpdater thread started");
-        ZMI myZone = Agent.zmi.getZoneOrNull(Agent.getMyPath());
+        ZMI myZone = Agent.getMyZMI();
         for(;;){
             logger.log(Level.INFO, "Fetching local stats");
             synchronized(Agent.zmi){

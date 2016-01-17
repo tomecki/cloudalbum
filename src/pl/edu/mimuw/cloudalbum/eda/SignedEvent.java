@@ -20,6 +20,17 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     private static final java.lang.String DIGEST_ALGORITHM = "SHA-256";
     private static final java.lang.String ENCRYPTION_ALGORITHM = "RSA";
     private static Logger logger = Logger.getLogger(SignedEvent.class.getName());
+    public int getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(int objectId) {
+        QuerySignerModule.signedObjectId = QuerySignerModule.signedObjectId + 1;
+        this.objectId = objectId;
+    }
+
+    private int objectId;
+
     private String messageTrace;
 
     public String getMessageTrace() {
@@ -60,6 +71,7 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     }
 
     private byte[] sign(byte[] bytes, PrivateKey privateKey) throws Exception {
+        this.setObjectId(QuerySignerModule.signedObjectId);
         Cipher signCipher = signCipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
         signCipher.init(Cipher.ENCRYPT_MODE, privateKey);
         return signCipher.doFinal(bytes);
@@ -87,7 +99,7 @@ public class SignedEvent<E extends Serializable> implements Serializable {
         return Arrays.equals(decryptedBytes, originalHash);
     }
 
-    public byte[] computeHash(E message) throws IOException {
+    public static<E> byte[] computeHash(E message) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out = new ObjectOutputStream(bos);
         out.writeObject(message);
@@ -112,7 +124,6 @@ public class SignedEvent<E extends Serializable> implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.digest = digest;
         return digest;
 
     }

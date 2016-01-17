@@ -43,7 +43,11 @@ public class AgentTest {
         Agent.readConfiguration("conf/blue10");
         String path = "/uw/mimuw/violet/violet01,/uw/mimuw/violet/violet04,/uw/mimuw/violet/violet06,/uw/mimuw/blue/blue10,/uw/mimuw/blue/blue13,/uw/mimuw/blue/blue12";
         ZMI root = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue10");
+        Agent.setMyPath(new PathName(Agent.configuration.get("path")));
+        Agent.zmi = root;
         Agent.fillContacts(root, Agent.configuration);
+
+        ZMI myZone = Agent.getMyZMI();
         Assert.assertTrue(1==1);
     }
 

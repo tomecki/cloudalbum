@@ -13,8 +13,8 @@ then
     tmux kill-session -t c
 fi
 
-cd sr/cloudalbum
-
+#cd sr/cloudalbum
+cd cloudalbum
 # checking for rmiregistry
 
 echo "starting tmux session on "`hostname`

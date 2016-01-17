@@ -1,7 +1,5 @@
 package pl.edu.mimuw.cloudalbum.agent;
 
-
-import com.google.common.base.Joiner;
 import pl.edu.mimuw.cloudalbum.contracts.InstallQueryContract;
 import pl.edu.mimuw.cloudalbum.contracts.StatusContract;
 import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
@@ -36,6 +34,9 @@ public class Agent implements GossipingAgent {
 
     private static Logger logger = Logger.getLogger(String.valueOf(Agent.class));
     private static Hashtable<String, ValueContact> addresses = new Hashtable<>();
+    /**
+     * The root of Agent's ZMI structure
+     */
     public static ZMI zmi;
     public static ZMI getMyZMI() { return zmi.getZoneOrNull(myPath); }
 
@@ -80,7 +81,7 @@ public class Agent implements GossipingAgent {
 
             // ================================= Query Signer
             logger.log(Level.INFO, "QS Binding to registry");
-            Registry qsRegistry = LocateRegistry.getRegistry(((ValueContact)(zmi.getAttributes().get("querySigner"))).getAddress().getHostName(), Integer.parseInt(args[0]));
+            Registry qsRegistry = LocateRegistry.getRegistry(((ValueContact)(Agent.getMyZMI().getAttributes().get("querySigner"))).getAddress().getHostName(), Integer.parseInt(args[0]));
             logger.log(Level.INFO, "QS Registry found: "+ qsRegistry.toString());
             querySigner = (QuerySigner) qsRegistry.lookup("QuerySignerModule");
             logger.log(Level.INFO, "QS Stub looked up");
@@ -97,8 +98,10 @@ public class Agent implements GossipingAgent {
 
     public static void fillContacts(ZMI root, Map<String, String> configuration) {
         try{
+            logger.info("configuration: "+ configuration.toString());
             String[] querySigner = configuration.get("querySigner").split(",");
-            root.getAttributes().addOrChange("querySigner", new ValueContact(new PathName(querySigner[0]), InetAddress.getByName(querySigner[1])));
+            Agent.getMyZMI().getAttributes().addOrChange("querySigner", new ValueContact(new PathName(querySigner[0]), InetAddress.getByName(querySigner[1])));
+            Agent.getMyZMI().getFreshness().addOrChange("querySigner", new ValueDuration(Agent.calendar.getTimeInMillis()));
             String[] contacts = configuration.get("contacts").split("#");
             ZMI myZone = root.getZoneOrNull(new PathName(configuration.get("path")));
             ZMI iterator =  myZone.getFather();
@@ -168,7 +171,7 @@ public class Agent implements GossipingAgent {
                 logger.log(Level.INFO, "Reading configuration entry: " + line);
                 configuration.put(arr[0], arr[1]);
             }
-            myPath = new PathName(configuration.get("path"));
+            setMyPath(new PathName(configuration.get("path")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -187,6 +190,12 @@ public class Agent implements GossipingAgent {
         return r;
     }
 
+    /**
+     * Gossip entry RMI methor
+     * @param attrMap - SignedEvent storing ZMI (root)
+     * @return
+     * @throws RemoteException
+     */
     @Override
     public SignedEvent<ZMIContract> gossip(SignedEvent<ZMIContract> attrMap) throws RemoteException {
         try {
@@ -202,7 +211,9 @@ public class Agent implements GossipingAgent {
                                 + "\nOriginal object trace: "
                                 + attrMap.getMessageTrace()
                                 + "\nCurrent object: "
-                                + attrMap.getMessage().toString());
+                                + attrMap.getMessage().toString()
+                + Arrays.toString(attrMap.getDigest()+
+                        + Arrays.toString(attrMap.getMessage()));
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -271,18 +282,23 @@ public class Agent implements GossipingAgent {
 
     private void updateLocalZMI(ZMI request, ZMI target) {
         assert(request.getPathName().equals(target.getPathName()));
-        synchronized (this) {
-            Iterator<Map.Entry<Attribute, Value>> iterator = request.getAttributes().iterator();
-            while(iterator.hasNext()){
-                Map.Entry<Attribute, Value> valueEntry = iterator.next();
-                if(target.getAttributes().getOrNull(valueEntry.getKey()) == null
-                        ||
-                        ((ValueBoolean)(target.getFreshness().get(valueEntry.getKey())
-                                .isLowerThan(request.getFreshness().get(valueEntry.getKey())))).getValue()){
-                    target.getAttributes().addOrChange(valueEntry);
-                    target.getFreshness().addOrChange(valueEntry.getKey(), request.getFreshness().get(valueEntry.getKey()));
+        try{
+            synchronized (this) {
+                Iterator<Map.Entry<Attribute, Value>> iterator = request.getAttributes().iterator();
+                while(iterator.hasNext()){
+                    Map.Entry<Attribute, Value> valueEntry = iterator.next();
+                    if(target.getAttributes().getOrNull(valueEntry.getKey()) == null
+                            ||
+                            ((ValueBoolean)(target.getFreshness().getOrNull(valueEntry.getKey())
+                                    .isLowerThan(request.getFreshness().getOrNull(valueEntry.getKey())))).getValue()){
+                        target.getAttributes().addOrChange(valueEntry);
+                        target.getFreshness().addOrChange(valueEntry.getKey(), request.getFreshness().get(valueEntry.getKey()));
+                    }
                 }
             }
+        } catch(Exception e){
+            logger.severe("Error merging ZMIs: \n"+request.toString() + "\n"+target.toString()+ "\n -> "+ e.getMessage());
+            e.printStackTrace();
         }
     }
 }

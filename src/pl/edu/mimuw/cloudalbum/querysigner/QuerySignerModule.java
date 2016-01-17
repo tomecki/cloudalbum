@@ -28,7 +28,7 @@ public class QuerySignerModule implements QuerySigner {
     private static final String PRIVATE_KEY_PATH = "private_key.der";
     private static final String PUBLIC_KEY_PATH = "public_key.der";
     private static Logger logger = Logger.getLogger(QuerySignerModule.class.getName());
-
+    public static int signedObjectId = 1;
     public <E extends Serializable> SignedEvent<E> signEvent(E o) throws RemoteException {
         try {
             logger.log(Level.INFO, "Signing message: " + o.toString() + "\nWith key: " + Arrays.toString(QuerySignerModule.getPublicKey().getEncoded()));
