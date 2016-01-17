@@ -2,7 +2,7 @@ package pl.edu.mimuw.cloudalbum.contracts;
 
 import pl.edu.mimuw.cloudatlas.model.ZMI;
 
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * Created by tomek on 13.01.16.
@@ -34,8 +34,12 @@ public class ZMIContract implements Serializable {
 
     @Override
     public String toString() {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(os);
+        zmi.printAttributes(printStream);
+        printStream.close();
         return "ZMIContract{" +
-                "zmi=" + zmi +
+                "zmi=" + os.toString() +
                 ", timeInMilis=" + timeInMilis +
                 '}';
     }

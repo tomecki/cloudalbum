@@ -24,13 +24,7 @@
 
 package pl.edu.mimuw.cloudatlas.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A value representing a set of values of the specified type. Implements <code>Set</code> interface.
@@ -61,7 +55,7 @@ public class ValueSet extends ValueSimple<Set<Value>> implements Set<Value> {
 	 * @param elementType type of elements stored in this set
 	 */
 	public ValueSet(Type elementType) {
-		super(new HashSet<Value>());
+		super(new TreeSet<Value>());
 		type = new TypeCollection(Type.PrimaryType.SET, elementType);
 	}
 	
@@ -89,7 +83,7 @@ public class ValueSet extends ValueSimple<Set<Value>> implements Set<Value> {
 		sameTypesOrThrow(value, Operation.ADD);
 		if(isNull() || value.isNull())
 			return new ValueSet(null, ((TypeCollection)getType()).getElementType());
-		Set<Value> result = new HashSet<Value>(getValue());
+		Set<Value> result = new TreeSet<Value>(getValue());
 		result.addAll(((ValueSet)value).getValue());
 		return new ValueSet(result, ((TypeCollection)getType()).getElementType());
 	}
@@ -104,7 +98,7 @@ public class ValueSet extends ValueSimple<Set<Value>> implements Set<Value> {
 		if(set == null)
 			super.setValue(null);
 		else {
-			super.setValue(new HashSet<Value>());
+			super.setValue(new TreeSet<Value>());
 			for(Value e : set)
 				add(e);
 		}

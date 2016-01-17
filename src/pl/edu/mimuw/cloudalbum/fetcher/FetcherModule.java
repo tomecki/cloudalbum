@@ -15,10 +15,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +43,7 @@ public class FetcherModule implements Fetcher {
             result.add(new Attribute("num_processes"), new ValueInt(getProcessesCount()));
             result.add(new Attribute("kernel_ver"), new ValueString(getKernelVersion()));
             result.add(new Attribute("logged_users"), new ValueInt(getLoggedUsers()));
-            HashSet<Value> hs = new HashSet<Value>();
+            TreeSet<Value> hs = new TreeSet<Value>();
             hs.add(new ValueString(InetAddress.getLocalHost().getHostName()));
             // TODO: more host names
             result.add(new Attribute("dns_names"), new ValueSet(hs, new ValueString("").getType()));

@@ -107,7 +107,7 @@ public class Agent implements GossipingAgent {
             ZMI iterator =  myZone.getFather();
             for(String level: contacts){
                 String[] levelContacts = (level.split(">")[1]).split(",");
-                Set<Value> set = new HashSet<>();
+                Set<Value> set = new TreeSet<>();
                 logger.log(Level.INFO, Arrays.toString(levelContacts));
                 for(String contact: levelContacts){
                     if(addresses.containsKey(contact))
@@ -212,8 +212,8 @@ public class Agent implements GossipingAgent {
                                 + attrMap.getMessageTrace()
                                 + "\nCurrent object: "
                                 + attrMap.getMessage().toString()
-                + Arrays.toString(attrMap.getDigest()+
-                        + Arrays.toString(attrMap.getMessage()));
+                                + "\nReceived digest: "+ Arrays.toString(attrMap.getDigest())
+                                + "\nActual digest: " + Arrays.toString(SignedEvent.computeHash(attrMap.getMessage())));
             } catch (Exception e1) {
                 e1.printStackTrace();
             }

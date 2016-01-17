@@ -24,15 +24,7 @@
 
 package pl.edu.mimuw.cloudatlas.interpreter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 import pl.edu.mimuw.cloudatlas.model.Attribute;
@@ -50,7 +42,7 @@ public class Table implements Iterable<TableRow> {
 
 	// creates whole table based on a given ZMI
 	public Table(ZMI zmi) {
-		Set<String> allColumns = new HashSet<String>();
+		Set<String> allColumns = new TreeSet<String>();
 		for(ZMI z : zmi.getSons())
 			for(Entry<Attribute, Value> e : z.getAttributes())
 				allColumns.add(e.getKey().getName());
