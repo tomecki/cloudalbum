@@ -33,7 +33,9 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
+import pl.edu.mimuw.cloudalbum.agent.Agent;
 import pl.edu.mimuw.cloudatlas.interpreter.query.Yylex;
 import pl.edu.mimuw.cloudatlas.interpreter.query.parser;
 import pl.edu.mimuw.cloudatlas.model.PathName;
@@ -52,7 +54,7 @@ import pl.edu.mimuw.cloudatlas.model.ZMI;
 
 public class Main {
 	private static ZMI root;
-	
+	private static Logger logger = Logger.getLogger(Main.class.getName());
 	public static void main(String[] args) throws Exception {
 		root = createTestHierarchy();
 		Scanner scanner;
@@ -72,22 +74,25 @@ public class Main {
 	}
 	
 	public static void executeQueries(ZMI zmi, String query) throws Exception {
-		if(!zmi.getSons().isEmpty()) {
-			for(ZMI son : zmi.getSons())
-				executeQueries(son, query);
-			Interpreter interpreter = new Interpreter(zmi);
-			Yylex lex = new Yylex(new ByteArrayInputStream(query.getBytes()));
-			try {
-				List<QueryResult> result = interpreter.interpretProgram((new parser(lex)).pProgram());
-				PathName zone = getPathName(zmi);
-				for(QueryResult r : result) {
-					System.out.println(zone + ": " + r);
-					zmi.getAttributes().addOrChange(r.getName(), r.getValue());
-				}
-			} catch(InterpreterException exception) {
+		logger.info("Executing query: "+ query + " on ZMI: " + zmi.toString());
+			if (!zmi.getSons().isEmpty()) {
+				for (ZMI son : zmi.getSons())
+					executeQueries(son, query);
+				Interpreter interpreter = new Interpreter(zmi);
+				Yylex lex = new Yylex(new ByteArrayInputStream(query.getBytes()));
+				try {
+					List<QueryResult> result = interpreter.interpretProgram((new parser(lex)).pProgram());
+					PathName zone = getPathName(zmi);
+					for (QueryResult r : result) {
+						System.out.println(zone + ": " + r);
+						zmi.getAttributes().addOrChange(r.getName(), r.getValue());
+						zmi.getFreshness().addOrChange(r.getName(), new ValueDuration(Agent.getCurrentTime()));
+						logger.info("Updated " + r.getName() + " with value: " + r.getValue() + " at " + zmi.getFreshness().get(r.getName()));
+					}
+				} catch (InterpreterException exception) {
 //				exception.printStackTrace();
+				}
 			}
-		}
 	}
 	
 	public static ValueContact createContact(String path, byte ip1, byte ip2, byte ip3, byte ip4)

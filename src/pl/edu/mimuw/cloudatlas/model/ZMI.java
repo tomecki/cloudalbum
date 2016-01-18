@@ -24,6 +24,9 @@
 
 package pl.edu.mimuw.cloudatlas.model;
 
+import pl.edu.mimuw.cloudalbum.agent.Agent;
+
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,6 +48,8 @@ public class ZMI implements Cloneable, Serializable {
 
 	public void setPathName(PathName pathName) {
 		this.pathName = pathName;
+		this.attributes.addOrChange("name", PathName.ROOT.getName().equals(pathName.getName())?new ValueString(null):new ValueString(pathName.getSingletonName()));
+		this.freshness.addOrChange("name", new ValueDuration(Agent.getCurrentTime()));
 	}
 
 	/**
@@ -149,9 +154,18 @@ public class ZMI implements Cloneable, Serializable {
 	public void printAttributes(PrintStream stream) {
 		for(Entry<Attribute, Value> entry : attributes)
 			stream.println(entry.getKey() + " : " + entry.getValue().getType() + " = " + entry.getValue());
-		System.out.println();
+		stream.println("===============");
 		for(ZMI son : sons)
 			son.printAttributes(stream);
+	}
+
+
+	public String printAttributesToString(){
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		PrintStream printStream = new PrintStream(os);
+		printAttributes(printStream);
+		printStream.close();
+		return os.toString();
 	}
 
 
@@ -239,5 +253,14 @@ public class ZMI implements Cloneable, Serializable {
 			return null;
 		}
 		return iterator;
+	}
+
+	public ZMI getSonOrNull(String component) {
+		for(ZMI son: getSons()){
+			if(component.equals(son.getPathName().getSingletonName())){
+				return son;
+			}
+		}
+		return null;
 	}
 }

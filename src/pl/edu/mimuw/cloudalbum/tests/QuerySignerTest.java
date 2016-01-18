@@ -55,9 +55,9 @@ public class QuerySignerTest {
         ZMI root = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue10");
         ZMI root2 = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue10");
 
-        ZMIContract z = new ZMIContract(root, Calendar.getInstance().getTimeInMillis());
-        Thread.sleep(1000);
-        ZMIContract z2 = new ZMIContract(root2, Calendar.getInstance().getTimeInMillis());
+        ZMIContract z = new ZMIContract(root, Calendar.getInstance().getTimeInMillis(), new PathName("/uw/mimuw/blue/blue10"));
+//        Thread.sleep(1000);
+        ZMIContract z2 = new ZMIContract(root2, Calendar.getInstance().getTimeInMillis(), new PathName("/uw/mimuw/blue/blue10"));
         SignedEvent<ZMIContract> zc = new SignedEvent<>(z, QuerySignerModule.getPrivateKey());
         Assert.assertTrue(zc.validate(z2, QuerySignerModule.getPublicKey()));
 

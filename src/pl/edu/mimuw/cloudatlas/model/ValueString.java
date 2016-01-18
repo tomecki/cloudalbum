@@ -29,7 +29,7 @@ import java.text.ParseException;
 /**
  * A class that wraps a Java <code>String</code> object.
  */
-public class ValueString extends ValueSimple<String> {
+public class ValueString extends ValueSimple<String> implements Comparable{
 	/**
 	 * A result of conversion values representing null to <code>ValueString</code>.
 	 */
@@ -117,5 +117,10 @@ public class ValueString extends ValueSimple<String> {
 	@Override
 	public ValueInt valueSize() {
 		return new ValueInt(getValue() == null? null : (long)getValue().length());
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getValue().compareTo(((ValueString)o).getValue());
 	}
 }

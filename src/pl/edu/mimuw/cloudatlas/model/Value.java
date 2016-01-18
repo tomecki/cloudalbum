@@ -29,7 +29,7 @@ import java.io.Serializable;
 /**
  * A single value stored as an attribute.
  */
-public abstract class Value implements Serializable {
+public abstract class Value implements Serializable, Comparable {
 	/**
 	 * An operation that may be performed on values.
 	 */

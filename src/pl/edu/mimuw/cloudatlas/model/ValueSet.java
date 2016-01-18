@@ -219,4 +219,18 @@ public class ValueSet extends ValueSimple<Set<Value>> implements Set<Value> {
 				throw new UnsupportedConversionException(getType(), type);
 		}
 	}
+
+    @Override
+    public int compareTo(Object o) {
+        ValueSet other = (ValueSet)o;
+        Iterator<Value> iterator = iterator(), otherIterator = other.iterator();
+        while(iterator.hasNext() && otherIterator.hasNext()){
+            Value x = iterator.next(), y = otherIterator.next();
+            if(x.compareTo(y) != 0)
+                return x.compareTo(y);
+        }
+        if(iterator.hasNext()) return 1;
+        if(otherIterator.hasNext()) return -1;
+        return 0;
+    }
 }

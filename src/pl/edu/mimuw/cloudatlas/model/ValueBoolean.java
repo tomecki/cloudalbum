@@ -87,4 +87,10 @@ public class ValueBoolean extends ValueSimple<Boolean> {
 				throw new UnsupportedConversionException(getType(), type);
 		}
 	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getValue().compareTo(((ValueBoolean)o).getValue());
+
+	}
 }

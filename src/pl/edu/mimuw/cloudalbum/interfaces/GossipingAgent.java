@@ -1,5 +1,6 @@
 package pl.edu.mimuw.cloudalbum.interfaces;
 
+import pl.edu.mimuw.cloudalbum.contracts.GetZMIContract;
 import pl.edu.mimuw.cloudalbum.contracts.InstallQueryContract;
 import pl.edu.mimuw.cloudalbum.contracts.StatusContract;
 import pl.edu.mimuw.cloudalbum.contracts.ZMIContract;
@@ -16,6 +17,6 @@ import java.rmi.RemoteException;
 public interface GossipingAgent extends Remote{
     public SignedEvent<ZMIContract> gossip(SignedEvent<ZMIContract> attrMap) throws RemoteException;
     public SignedEvent<StatusContract> installQuery(SignedEvent<InstallQueryContract> query) throws RemoteException;
-    public SignedEvent<ZMIContract> getZMI(SignedEvent<String> zone) throws RemoteException;
+    public SignedEvent<ZMIContract> getZMI(SignedEvent<GetZMIContract> zone) throws RemoteException;
     // TODO: uninstalling queries
 }

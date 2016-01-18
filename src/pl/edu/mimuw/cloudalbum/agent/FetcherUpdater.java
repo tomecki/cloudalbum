@@ -43,9 +43,9 @@ public class FetcherUpdater implements Runnable {
                 Iterator<Map.Entry<Attribute, Value>> it = currentState.iterator();
                 while(it.hasNext()){
                     Map.Entry<Attribute, Value> v = it.next();
-                    myZone.getFreshness().addOrChange(v.getKey(), new ValueDuration(Agent.calendar.getTimeInMillis()));
+                    myZone.getFreshness().addOrChange(v.getKey(), new ValueDuration(Agent.getCurrentTime()));
                 }
-                Agent.lastZMIupdate = Agent.calendar.getTimeInMillis();
+                Agent.lastZMIupdate = Agent.getCurrentTime();
             }
             logger.log(Level.INFO, "Fetching local stats finished");
             try {

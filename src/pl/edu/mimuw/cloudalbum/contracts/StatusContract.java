@@ -10,6 +10,13 @@ public class StatusContract implements Serializable {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "StatusContract{" +
+                "status=" + status +
+                '}';
+    }
+
     public enum STATUS {
         OK, ERROR
     };

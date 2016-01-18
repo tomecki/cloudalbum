@@ -57,7 +57,6 @@ public class AgentTest {
         ZMI root = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue10");
         ZMI request = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue13");
 
-        request = request.getFather().getFather();
         Agent.zmi = root;
         ZMI iterator = root.getFather().getFather();
         Agent.querySigner = new QuerySignerModule();
@@ -66,19 +65,19 @@ public class AgentTest {
         iterator.getAttributes().addOrChange("a2", new ValueString("c"));
         iterator.getAttributes().addOrChange("a3", new ValueString("d"));
 
-        iterator.getFreshness().addOrChange("a1", new ValueDuration(Agent.calendar.getTimeInMillis()));
-        iterator.getFreshness().addOrChange("a2", new ValueDuration(Agent.calendar.getTimeInMillis()-1000));
-        iterator.getFreshness().addOrChange("a3", new ValueDuration(Agent.calendar.getTimeInMillis()));
+        iterator.getFreshness().addOrChange("a1", new ValueDuration(Agent.getCurrentTime()));
+        iterator.getFreshness().addOrChange("a2", new ValueDuration(Agent.getCurrentTime()-1000));
+        iterator.getFreshness().addOrChange("a3", new ValueDuration(Agent.getCurrentTime()));
 
         request.getAttributes().addOrChange("a1", new ValueString("x"));
         request.getAttributes().addOrChange("a2", new ValueString("y"));
         request.getAttributes().addOrChange("a3", new ValueString("z"));
 
-        request.getFreshness().addOrChange("a1", new ValueDuration(Agent.calendar.getTimeInMillis()-1000));
-        request.getFreshness().addOrChange("a2", new ValueDuration(Agent.calendar.getTimeInMillis()));
-        request.getFreshness().addOrChange("a3", new ValueDuration(Agent.calendar.getTimeInMillis()-1000));
+        request.getFreshness().addOrChange("a1", new ValueDuration(Agent.getCurrentTime()-1000));
+        request.getFreshness().addOrChange("a2", new ValueDuration(Agent.getCurrentTime()));
+        request.getFreshness().addOrChange("a3", new ValueDuration(Agent.getCurrentTime()-1000));
 
-        final SignedEvent<ZMIContract> gossip = new Agent().gossip(Agent.querySigner.signEvent(new ZMIContract(request, Agent.calendar.getTimeInMillis())));
+        final SignedEvent<ZMIContract> gossip = new Agent().gossip(Agent.querySigner.signEvent(new ZMIContract(request, Agent.getCurrentTime(), new PathName("/uw/mimuw/blue/blue13"))));
         Assert.assertTrue(1 == 1);
     }
 
@@ -100,5 +99,16 @@ public class AgentTest {
         Assert.assertEquals(4, root.getZMIDepth(new PathName("/uw/mimuw/blue/blue10")));
         ZMI actual = root.getNLevelsUp(4);
         logger.info(actual.toString());
+    }
+
+    @Test
+    public void updateZMITest() throws RemoteException {
+        String path = "/uw/mimuw/violet/violet01,/uw/mimuw/violet/violet04,/uw/mimuw/violet/violet06,/uw/mimuw/blue/blue10,/uw/mimuw/blue/blue13,/uw/mimuw/blue/blue12";
+        ZMI root = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue10");
+        ZMI request = Agent.createZMIHierarchy(path, "/uw/mimuw/blue/blue13");
+        Agent.setMyPath(new PathName("/uw/mimuw/blue/blue13"));
+        Agent.zmi = request;
+        Agent.updateZMIStructure(root, request, new PathName("/uw/mimuw/blue/blue10"), new PathName("/uw/mimuw/blue/blue13"));
+        Assert.assertTrue(true);
     }
 }

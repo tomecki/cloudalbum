@@ -1,5 +1,6 @@
 package pl.edu.mimuw.cloudalbum.contracts;
 
+import pl.edu.mimuw.cloudatlas.model.PathName;
 import pl.edu.mimuw.cloudatlas.model.ZMI;
 
 import java.io.*;
@@ -10,10 +11,20 @@ import java.io.*;
 public class ZMIContract implements Serializable {
     private ZMI zmi;
     private Long timeInMilis;
+    private PathName sender;
 
-    public ZMIContract(ZMI zmi, Long timeInMilis) {
+    public PathName getSender() {
+        return sender;
+    }
+
+    public void setSender(PathName sender) {
+        this.sender = sender;
+    }
+
+    public ZMIContract(ZMI zmi, Long timeInMilis, PathName sender) {
         this.zmi = zmi;
         this.timeInMilis = timeInMilis;
+        this.sender = sender;
     }
 
     public ZMI getZmi() {
@@ -41,6 +52,7 @@ public class ZMIContract implements Serializable {
         return "ZMIContract{" +
                 "zmi=" + os.toString() +
                 ", timeInMilis=" + timeInMilis +
+                ", sender=" + sender.getName() +
                 '}';
     }
 }

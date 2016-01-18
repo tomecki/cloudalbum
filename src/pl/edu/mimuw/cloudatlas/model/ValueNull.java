@@ -149,4 +149,9 @@ public class ValueNull extends Value {
 	public Value valueSize() {
 		return this;
 	}
+
+	@Override
+	public int compareTo(Object o) {
+		return 0;
+	}
 }

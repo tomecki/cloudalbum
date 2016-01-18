@@ -45,7 +45,7 @@ import com.esotericsoftware.kryo.serializers.FieldSerializer;
  * @see java.util.List
  */
 @DefaultSerializer(value = FieldSerializer.class)
-public class ValueList extends ValueSimple<List<Value>> implements List<Value> {
+public class ValueList extends ValueSimple<List<Value>> implements List<Value>, Comparable {
 	private TypeCollection type;
 	
 	/**
@@ -271,5 +271,20 @@ public class ValueList extends ValueSimple<List<Value>> implements List<Value> {
 	@Override
 	public <Y> Y[] toArray(Y[] a) {
 		return getList().toArray(a);
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		ValueList other = (ValueList)o;
+		Iterator<Value> iterator = iterator();
+		Iterator<Value> otherIterator = other.iterator();
+		while(iterator.hasNext() && otherIterator.hasNext()){
+			Value x = iterator.next(), y = otherIterator.next();
+			if(x.compareTo(y) != 0)
+				return x.compareTo(y);
+		}
+		if(iterator.hasNext()) return 1;
+		if(otherIterator.hasNext()) return -1;
+		return 0;
 	}
 }

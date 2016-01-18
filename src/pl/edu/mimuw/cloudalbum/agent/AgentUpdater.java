@@ -34,7 +34,7 @@ public class AgentUpdater implements Runnable {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         int levelDepth = Agent.zmi.getZMIDepth(Agent.getMyZMI().getPathName());
         GossipingAgent agent = null;
-        int level = 1;
+        int level = 0;
         for(;;){
             agent = null;
             try {
@@ -46,7 +46,7 @@ public class AgentUpdater implements Runnable {
             try {
 
                 SignedEvent<ZMI> am = querySigner.signEvent(Agent.zmi.clone());
-                logger.log(Level.INFO, "Signed attributes map: " + am.toString());
+//                logger.log(Level.INFO, "Signed attributes map: " + am.toString());
 
                 /**
                  * Select level for gossiping
@@ -93,14 +93,17 @@ public class AgentUpdater implements Runnable {
                     logger.info("No agent available for gossiping for " + gossipLevel.getPathName().getName());
                     continue;
                 }
-                SignedEvent<ZMIContract> contract = querySigner.signEvent(new ZMIContract(Agent.zmi.clone(), Agent.lastZMIupdate));
+                SignedEvent<ZMIContract> contract = querySigner.signEvent(new ZMIContract(Agent.zmi.clone(), Agent.lastZMIupdate, Agent.getMyPath()));
 
                 Future<SignedEvent<ZMIContract>> future = executor.submit(new GossipCallable(contract, agent));
 
                 try {
                     SignedEvent<ZMIContract> result = future.get(3, TimeUnit.SECONDS);
-                    // TODO: merge results with local ZMI
-
+                    if(Agent.getCurrentTime() < result.getMessage().getTimeInMilis()){
+                        Agent.offset += result.getMessage().getTimeInMilis() - Agent.getCurrentTime() + 1000;
+                    }
+                    Agent.updateZMIStructure(result.getMessage().getZmi(), Agent.zmi, result.getMessage().getSender(), Agent.getMyPath());
+                    logger.info("Merged ZMI: " + Agent.zmi.printAttributesToString());
                 } catch (TimeoutException e) {
                     future.cancel(true);
                 } catch (InterruptedException e) {

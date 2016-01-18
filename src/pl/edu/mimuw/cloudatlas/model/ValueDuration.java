@@ -30,6 +30,11 @@ package pl.edu.mimuw.cloudatlas.model;
  * <code>Long</code> object.
  */
 public class ValueDuration extends ValueSimple<Long> {
+	@Override
+	public String toString() {
+		return getValue().toString();
+	}
+
 	/**
 	 * Constructs a new <code>ValueDuration</code> object wrapping the specified <code>value</code>.
 	 * 
@@ -194,5 +199,10 @@ public class ValueDuration extends ValueSimple<Long> {
 
 		throw new UnsupportedOperationException(
 				"Conversion not supported: from DURATION to "+type.getPrimaryType().name());
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getValue().compareTo(((ValueDuration)o).getValue());
 	}
 }

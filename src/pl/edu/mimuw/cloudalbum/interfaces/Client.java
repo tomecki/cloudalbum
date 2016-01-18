@@ -9,5 +9,5 @@ import java.io.Serializable;
  * Created by tomek on 12.01.16.
  */
 public interface Client {
-    public SignedEvent<ZMI> getAgentZMI();
+
 }

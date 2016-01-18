@@ -79,7 +79,7 @@ public class SignedEvent<E extends Serializable> implements Serializable {
     }
 
     public boolean validate(PublicKey publicKey) throws Exception {
-        logger.info("Validating against " + this.getMessage().toString() + "\nWith key: "+ Arrays.toString(QuerySignerModule.getPublicKey().getEncoded()));
+//        logger.info("Validating against " + this.getMessage().toString() + "\nWith key: "+ Arrays.toString(QuerySignerModule.getPublicKey().getEncoded()));
         return validate(this.hash, computeHash(this.getMessage()), publicKey);
     }
 
@@ -91,10 +91,10 @@ public class SignedEvent<E extends Serializable> implements Serializable {
         Cipher verifyCipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
         verifyCipher.init(Cipher.DECRYPT_MODE, publicKey);
         byte[] decryptedBytes = verifyCipher.doFinal(signedHash);
-        logger.info("validation: "
-                + Arrays.toString(decryptedBytes)
-                + "\n"
-                + Arrays.toString(originalHash));
+//        logger.info("validation: "
+//                + Arrays.toString(decryptedBytes)
+//                + "\n"
+//                + Arrays.toString(originalHash));
 
         return Arrays.equals(decryptedBytes, originalHash);
     }

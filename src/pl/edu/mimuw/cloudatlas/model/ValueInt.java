@@ -128,4 +128,9 @@ public class ValueInt extends ValueSimple<Long> {
 				throw new UnsupportedConversionException(getType(), type);
 		}
 	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getValue().compareTo(((ValueInt)o).getValue());
+	}
 }

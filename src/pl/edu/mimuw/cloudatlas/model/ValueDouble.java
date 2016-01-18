@@ -105,4 +105,10 @@ public class ValueDouble extends ValueSimple<Double> {
 				throw new UnsupportedConversionException(getType(), type);
 		}
 	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getValue().compareTo(((ValueDouble)o).getValue());
+
+	}
 }

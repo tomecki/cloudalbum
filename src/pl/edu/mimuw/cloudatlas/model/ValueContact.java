@@ -32,7 +32,7 @@ import java.net.InetAddress;
  * <p>
  * This class is immutable.
  */
-public class ValueContact extends Value {
+public class ValueContact extends Value implements Comparable {
 	private final PathName name;
 	private final InetAddress address;
 	
@@ -93,5 +93,10 @@ public class ValueContact extends Value {
 	@Override
 	public boolean isNull() {
 		return name == null || address == null;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getName().getName().compareTo(((ValueContact)o).getName().getName());
 	}
 }
