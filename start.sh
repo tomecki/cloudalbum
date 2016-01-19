@@ -11,7 +11,7 @@ then
     ./generateZones.py < hosts
 fi
 
-
+ant
 cat selectedHosts | cut -d ',' -f 1 | cut -d '/' -f 5 > hostbuffer
 
 # Run Query Signer
