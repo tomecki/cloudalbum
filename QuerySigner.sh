@@ -2,8 +2,8 @@
 
 set -v
 CLOUDALBUM_DEBUG_OPTS="-Dsun.rmi.client.logCalls=true"
-#cd sr/cloudalbum
-cd cloudalbum
+cd sr/cloudalbum
+#cd cloudalbum
 tmux ls | grep q:
 if [ $? -eq 0 ]
 then
