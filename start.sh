@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -v
-#cd sr/cloudalbum
-#git pull
+cd sr/cloudalbum
+git pull
 if [ ! -f hosts ] 
 then
     echo "discovering hosts"
@@ -12,7 +12,7 @@ then
 fi
 
 
-#cat selectedHosts | cut -d ',' -f 1 | cut -d '/' -f 5 > hostbuffer
+cat selectedHosts | cut -d ',' -f 1 | cut -d '/' -f 5 > hostbuffer
 
 # Run Query Signer
 queryNode=`cat hostbuffer | head -n 1`
@@ -29,4 +29,4 @@ do
     echo "singlenode continuing"
 done
 
-#rm hostbuffer
+rm hostbuffer
