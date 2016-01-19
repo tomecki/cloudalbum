@@ -26,23 +26,22 @@ import java.rmi.registry.Registry;
  * Created by tomek on 18.01.16.
  */
 public class GossipClient implements Client {
-    private static String QUERY_SIGNER_HOST = "m1";
     public static void main(String[] args) throws IOException, NotBoundException, InterruptedException {
-        Registry qsRegistry = LocateRegistry.getRegistry(QUERY_SIGNER_HOST, 1097);
+        Registry qsRegistry = LocateRegistry.getRegistry(args[0], 1097);
         QuerySigner querySigner = (QuerySigner) qsRegistry.lookup("QuerySignerModule");
 
-        String host = args[0];
-        String command  = args[1];
+        String host = args[1];
+        String command  = args[2];
         if("show".equals(command)){
-            System.out.println(getZMI(host, args[2], querySigner).toString());
+            System.out.println(getZMI(host, args[3], querySigner).toString());
         } else if("install".equals(command)){
-            for(String line: Files.readAllLines(Paths.get(args[2]), Charset.defaultCharset())){
+            for(String line: Files.readAllLines(Paths.get(args[3]), Charset.defaultCharset())){
                 String[] split = line.split(":");
                 installQuery(host, split[0], split[1], querySigner);
             }
 
         } else  if("monitor".equals(command)){
-            monitor(host, args[2], args[3], querySigner);
+            monitor(host, args[3], args[4], querySigner);
         }
     }
 
